@@ -36,9 +36,9 @@ your class, and then add logging code of the form:
 [iConsole log:@"some message"];
 
 The message can have format parameters, and follows the same syntax as the
-NSLog() command, and will log to both the in app and Xcode console, so can be
-used anywhere in place of NSLog. Note however that the iConsole log command is
-NOT thread safe.
+NSLog() command, and will log to both the in app and Xcode console. The
+iConsole logging commands are also thread safe and so can be used anywhere in
+place of NSLog().
 
 In addition to the log: method, there are also the following additional log
 functions that can be use in conjunction with the LOG_LEVEL constant to easily

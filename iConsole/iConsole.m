@@ -48,7 +48,6 @@ static iConsole *sharedConsole = nil;
 
 void exceptionHandler(NSException *exception)
 {
-	
 	NSString *trace;
 	
 #if USE_GOOGLE_STACK_TRACE
@@ -73,11 +72,19 @@ void exceptionHandler(NSException *exception)
 
 - (void)setConsoleText
 {
-	consoleView.text = [NSString stringWithFormat:@"%@\n%@\n%@\n%@", CONSOLE_BRANDING,
-						[NSString stringWithFormat: @"Swipe down with %i finger%@ to hide console",
-						 (TARGET_IPHONE_SIMULATOR ? SIMULATOR_CONSOLE_TOUCHES: DEVICE_CONSOLE_TOUCHES),
-						 ((TARGET_IPHONE_SIMULATOR ? SIMULATOR_CONSOLE_TOUCHES: DEVICE_CONSOLE_TOUCHES) != 1)? @"s": @""],
-						@"--------------------------------------", [log componentsJoinedByString:@"\n"]];
+	NSString *text = CONSOLE_BRANDING;
+	int touches = (TARGET_IPHONE_SIMULATOR ? SIMULATOR_CONSOLE_TOUCHES: DEVICE_CONSOLE_TOUCHES);
+	if (touches > 0 && touches < 11)
+	{
+		text = [text stringByAppendingFormat:@"\nSwipe down with %i finger%@ to hide console", touches, (touches != 1)? @"s": @""];
+	}
+	else if (TARGET_IPHONE_SIMULATOR ? SIMULATOR_SHAKE_TO_SHOW_CONSOLE: DEVICE_SHAKE_TO_SHOW_CONSOLE)
+	{
+		text = [text stringByAppendingString:@"\nShake device to hide console"];
+	}
+	text = [text stringByAppendingString:@"\n--------------------------------------\n"];
+	text = [text stringByAppendingString:[log componentsJoinedByString:@"\n"]];
+	consoleView.text = text;
 	
 	[consoleView scrollRangeToVisible:NSMakeRange(consoleView.text.length, 0)];
 }
@@ -303,6 +310,17 @@ void exceptionHandler(NSException *exception)
 	[UIView commitAnimations];
 }
 
+- (void)logOnMainThread:(NSString *)message
+{
+	[log insertObject:[@"> " stringByAppendingString:message] atIndex:[log count] - 1];
+	if ([log count] > MAX_LOG_ITEMS)
+	{
+		[log removeObjectAtIndex:0];
+	}
+	[self setConsoleText];
+	[consoleView scrollRangeToVisible:NSMakeRange(consoleView.text.length, 0)];
+}
+
 #pragma mark -
 #pragma mark UITextFieldDelegate methods
 
@@ -514,17 +532,14 @@ void exceptionHandler(NSException *exception)
 	
 #if defined CONSOLE_ENABLED && CONSOLE_ENABLED
 	
-	[[self sharedConsole].log insertObject:[@"> " stringByAppendingString:message] atIndex:[sharedConsole.log count] - 1];
-	sharedConsole.consoleView.text = [sharedConsole.consoleView.text stringByAppendingFormat:@"%@\n> ", message];
-	
-	if ([sharedConsole.log count] > MAX_LOG_ITEMS)
-	{
-		NSUInteger lineLength = [[sharedConsole.log objectAtIndex:0] length];
-		sharedConsole.consoleView.text = [sharedConsole.consoleView.text substringFromIndex:lineLength + 1];
-		[sharedConsole.log removeObjectAtIndex:0];
+	if ([NSThread currentThread] == [NSThread mainThread])
+	{	
+		[sharedConsole logOnMainThread:message];
 	}
-	
-	[sharedConsole.consoleView scrollRangeToVisible:NSMakeRange(sharedConsole.consoleView.text.length, 0)];
+	else
+	{
+		[sharedConsole performSelectorOnMainThread:@selector(logOnMainThread:) withObject:message waitUntilDone:NO];
+	}
 	
 #endif
 

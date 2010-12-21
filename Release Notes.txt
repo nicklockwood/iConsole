@@ -6,6 +6,8 @@ Version 1.1
 
 - Added shake-to-show option
 - Fully tested on iPad
+- Logging is now thread safe
 - Fixed issue with pressing info button when keyboard is open
 - Correctly handles interface rotation
 - Correctly handles in-call status bar
+- Fixed bug when console exceeds max rows

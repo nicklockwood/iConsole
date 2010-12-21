@@ -45,7 +45,7 @@
 					<object class="IBUILabel" id="233318382">
 						<reference key="NSNextResponder" ref="774585933"/>
 						<int key="NSvFlags">293</int>
-						<string key="NSFrame">{{43, 56}, {237, 21}}</string>
+						<string key="NSFrame">{{41, 56}, {238, 21}}</string>
 						<reference key="NSSuperview" ref="774585933"/>
 						<bool key="IBUIOpaque">NO</bool>
 						<bool key="IBUIClipsSubviews">YES</bool>
@@ -64,7 +64,7 @@
 					<object class="IBUITextField" id="196854114">
 						<reference key="NSNextResponder" ref="774585933"/>
 						<int key="NSvFlags">295</int>
-						<string key="NSFrame">{{43, 110}, {237, 31}}</string>
+						<string key="NSFrame">{{41, 110}, {238, 31}}</string>
 						<reference key="NSSuperview" ref="774585933"/>
 						<bool key="IBUIOpaque">NO</bool>
 						<bool key="IBUIClearsContextBeforeDrawing">NO</bool>
@@ -124,7 +124,7 @@
 							<object class="IBUIButton" id="659866188">
 								<reference key="NSNextResponder" ref="671720663"/>
 								<int key="NSvFlags">292</int>
-								<string key="NSFrame">{{130, 20}, {92, 37}}</string>
+								<string key="NSFrame">{{126, 20}, {92, 37}}</string>
 								<reference key="NSSuperview" ref="671720663"/>
 								<bool key="IBUIOpaque">NO</bool>
 								<bool key="IBUIClearsContextBeforeDrawing">NO</bool>
@@ -142,7 +142,7 @@
 								<reference key="IBUINormalTitleShadowColor" ref="369061634"/>
 							</object>
 						</object>
-						<string key="NSFrame">{{40, 151}, {237, 73}}</string>
+						<string key="NSFrame">{{41, 151}, {238, 73}}</string>
 						<reference key="NSSuperview" ref="774585933"/>
 						<object class="NSColor" key="IBUIBackgroundColor">
 							<int key="NSColorSpace">3</int>

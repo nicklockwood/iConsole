@@ -26,6 +26,11 @@
 	[iConsole info:@"Said '%@'", label.text];
 }
 
+- (IBAction)crash:(id)sender
+{
+	[[NSException exceptionWithName:@"HelloWorldException" reason:@"Demonstrating crash logging" userInfo:nil] raise];
+}
+
 - (void)viewDidLoad
 {
     [iConsole sharedConsole].delegate = self;
@@ -69,7 +74,5 @@
 	[field release];
     [super dealloc];
 }
-
-//I know the method - '-crash:' isn't defined - that's intentional, so that pressing it will cause a crash!
 
 @end
