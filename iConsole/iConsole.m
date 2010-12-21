@@ -1,0 +1,515 @@
+    //
+//  iConsole.m
+//  HelloWorld
+//
+//  Created by Nick Lockwood on 20/12/2010.
+//  Copyright 2010 Charcoal Design. All rights reserved.
+//
+
+#import "iConsole.h"
+#import <stdarg.h>
+#import <string.h> 
+
+#if USE_GOOGLE_STACK_TRACE
+#import "GTMStackTrace.h"
+#endif
+
+
+#define EDITFIELD_HEIGHT 28
+#define INFOBUTTON_WIDTH 20
+
+
+static iConsole *sharedConsole = nil;
+
+
+@interface iConsole()
+
+@property (nonatomic, retain) UITextView *consoleView;
+@property (nonatomic, retain) UITextField *inputField;
+@property (nonatomic, retain) UIButton *infoButton;
+@property (nonatomic, retain) NSMutableArray *log;
+@property (nonatomic, assign) BOOL animating;
+
+@end
+
+
+@implementation iConsole
+
+@synthesize delegate;
+@synthesize consoleView;
+@synthesize inputField;
+@synthesize infoButton;
+@synthesize log;
+@synthesize animating;
+
+
+#pragma mark -
+#pragma mark Private methods
+
+void exceptionHandler(NSException *exception)
+{
+	
+	NSString *trace;
+	
+#if USE_GOOGLE_STACK_TRACE
+	
+	trace = GTMStackTraceFromException(exception);
+	
+#else
+	
+	trace = [[exception callStackReturnAddresses] componentsJoinedByString:@"\n"];
+	 
+#endif
+	
+	[iConsole crash:@"Stack: (\n%@\n)", trace];
+
+#if SAVE_LOG_TO_DISK
+	
+	[[iConsole sharedConsole] performSelector:@selector(savePreferences)];
+	
+#endif
+	
+}
+
+- (void)setConsoleText
+{
+	consoleView.text = [NSString stringWithFormat:@"%@\n%@\n%@\n%@", CONSOLE_BRANDING,
+						[NSString stringWithFormat: @"Swipe down with %i finger%@ to hide console",
+						 (TARGET_IPHONE_SIMULATOR ? SIMULATOR_CONSOLE_TOUCHES: DEVICE_CONSOLE_TOUCHES),
+						 ((TARGET_IPHONE_SIMULATOR ? SIMULATOR_CONSOLE_TOUCHES: DEVICE_CONSOLE_TOUCHES) != 1)? @"s": @""],
+						@"--------------------------------------", [log componentsJoinedByString:@"\n"]];
+}
+
+- (void)resetLog
+{
+	self.log = [NSMutableArray arrayWithObjects:@"> ", nil];
+	[self setConsoleText];
+}
+
+- (void)savePreferences
+{
+	[[NSUserDefaults standardUserDefaults] setObject:self.log forKey:@"iConsoleLog"];
+	[[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+- (void)infoAction
+{
+	UIActionSheet *sheet = [[[UIActionSheet alloc] initWithTitle:@""
+														delegate:self
+											   cancelButtonTitle:@"Cancel"
+										  destructiveButtonTitle:@"Clear Log"
+											   otherButtonTitles:@"Send by Email", nil] autorelease];
+	
+	sheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
+	[sheet showInView:self.view];
+}
+
+- (void)keyboardWillShow:(NSNotification *)notification
+{	
+	CGRect frame = [[notification.userInfo valueForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
+	CGFloat duration = [[notification.userInfo valueForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
+	UIViewAnimationCurve curve = [[notification.userInfo valueForKey:UIKeyboardAnimationCurveUserInfoKey] intValue];
+	
+	[UIView beginAnimations:nil context:NULL];
+	[UIView setAnimationBeginsFromCurrentState:YES];
+	[UIView setAnimationDuration:duration];
+	[UIView setAnimationCurve:curve];
+	consoleView.frame = CGRectMake(0, 0, self.view.frame.size.width,
+								   self.view.frame.size.height - EDITFIELD_HEIGHT - 10 - frame.size.height);
+	inputField.frame = CGRectMake(5, self.view.frame.size.height - EDITFIELD_HEIGHT - 5 - frame.size.height,
+								  self.view.frame.size.width - 15 - INFOBUTTON_WIDTH, EDITFIELD_HEIGHT);
+	infoButton.frame = CGRectMake(self.view.frame.size.width - INFOBUTTON_WIDTH - 5,
+								  self.view.frame.size.height - EDITFIELD_HEIGHT - 5 - frame.size.height,
+								  INFOBUTTON_WIDTH, EDITFIELD_HEIGHT);
+	[UIView commitAnimations];
+}
+
+- (void)keyboardWillHide:(NSNotification *)notification
+{
+	CGFloat duration = [[notification.userInfo valueForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
+	UIViewAnimationCurve curve = [[notification.userInfo valueForKey:UIKeyboardAnimationCurveUserInfoKey] intValue];
+	
+	[UIView beginAnimations:nil context:NULL];
+	[UIView setAnimationBeginsFromCurrentState:YES];
+	[UIView setAnimationDuration:duration];
+	[UIView setAnimationCurve:curve];
+	consoleView.frame = CGRectMake(0, 0, self.view.frame.size.width,
+								   self.view.frame.size.height - EDITFIELD_HEIGHT - 10);
+	inputField.frame = CGRectMake(5, self.view.frame.size.height - EDITFIELD_HEIGHT - 5,
+								  self.view.frame.size.width - 15 - INFOBUTTON_WIDTH,
+								  EDITFIELD_HEIGHT);
+	infoButton.frame = CGRectMake(self.view.frame.size.width - INFOBUTTON_WIDTH - 5,
+								  self.view.frame.size.height - EDITFIELD_HEIGHT - 5,
+								  INFOBUTTON_WIDTH, EDITFIELD_HEIGHT);
+	[UIView commitAnimations];
+}
+
+- (BOOL)findAndResignFirstResponder:(UIView *)view
+{
+    if ([view isFirstResponder])
+	{
+        [view resignFirstResponder];
+        return YES;     
+    }
+    for (UIView *subview in view.subviews)
+	{
+        if ([self findAndResignFirstResponder:subview])
+        {
+			return YES;
+		}
+    }
+    return NO;
+}
+
+- (void)showConsole
+{	
+	if (!animating && self.view.superview == nil)
+	{
+		[self findAndResignFirstResponder:[[UIApplication sharedApplication] keyWindow]];
+		
+		CGRect frame = [UIScreen mainScreen].applicationFrame;
+		frame.origin.y = frame.size.height;
+		[iConsole sharedConsole].view.frame = frame;
+		[[[UIApplication sharedApplication] keyWindow] addSubview:[iConsole sharedConsole].view];
+		
+		animating = YES;
+		[UIView beginAnimations:nil context:nil];
+		[UIView setAnimationDuration:0.4];
+		[UIView setAnimationDelegate:self];
+		[UIView setAnimationDidStopSelector:@selector(consoleShown)];
+		[iConsole sharedConsole].view.frame = [UIScreen mainScreen].applicationFrame;
+		[UIView commitAnimations];
+	}
+}
+
+- (void)consoleShown
+{
+	animating = NO;
+	[self findAndResignFirstResponder:[[UIApplication sharedApplication] keyWindow]];
+}
+
+- (void)hideConsole
+{
+	if (!animating && self.view.superview != nil)
+	{
+		[self findAndResignFirstResponder:[[UIApplication sharedApplication] keyWindow]];
+		
+		animating = YES;
+		CGRect frame = [UIScreen mainScreen].applicationFrame;
+		frame.origin.y = frame.size.height;
+		[UIView beginAnimations:nil context:nil];
+		[UIView setAnimationDuration:0.4];
+		[UIView setAnimationDelegate:self];
+		[UIView setAnimationDidStopSelector:@selector(consoleHidden)];
+		[iConsole sharedConsole].view.frame = frame;
+		[UIView commitAnimations];
+	}
+}
+
+- (void)consoleHidden
+{
+	animating = NO;
+	[[[iConsole sharedConsole] view] removeFromSuperview];
+}
+
+
+#pragma mark -
+#pragma mark UITextFieldDelegate methods
+
+- (void)textFieldDidEndEditing:(UITextField *)textField
+{
+	if (![textField.text isEqualToString:@""])
+	{
+		[iConsole log:textField.text];
+		[delegate handleConsoleCommand:textField.text];
+		textField.text = @"";
+	}
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+	[textField resignFirstResponder];
+	return YES;
+}
+
+- (BOOL)textFieldShouldClear:(UITextField *)textField
+{
+	return YES;
+}
+
+
+#pragma mark -
+#pragma mark UIActionSheetDelegate methods
+
+- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+	if (buttonIndex == actionSheet.destructiveButtonIndex)
+	{
+		[iConsole clear];
+	}
+	else if (buttonIndex == actionSheet.firstOtherButtonIndex)
+	{
+		NSMutableString *url = [NSMutableString stringWithFormat:@"mailto:%@?subject=%@%%20Console%%20Log&body=",
+								LOG_SUBMIT_EMAIL, [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"]];
+		for (NSString *line in self.log) {
+			[url appendString:[line stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+			[url appendString:@"%0A"];
+		}
+		[[UIApplication sharedApplication] openURL:[NSURL URLWithString:url]];
+	}
+}
+
+
+#pragma mark -
+#pragma mark Life cycle
+
++ (void)initialize
+{
+
+#if ADD_CRASH_HANDLER
+	
+	NSSetUncaughtExceptionHandler(&exceptionHandler);
+	
+#endif
+	
+}
+
++ (iConsole *)sharedConsole
+{
+
+#if defined CONSOLE_ENABLED && CONSOLE_ENABLED
+	
+	if (sharedConsole == nil)
+	{
+		sharedConsole = [[self alloc] init];
+	}
+	return sharedConsole;
+	
+#else
+	
+	return nil
+	
+#endif
+	
+}
+
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+	if ((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]))
+	{
+		[self resetLog];
+		
+#if SAVE_LOG_TO_DISK
+		
+		[[NSUserDefaults standardUserDefaults] synchronize];
+		NSArray *loadedLog = [[NSUserDefaults standardUserDefaults] objectForKey:@"iConsoleLog"];
+		if (loadedLog && [loadedLog count] > 0)
+		{
+			self.log = [[loadedLog mutableCopy] autorelease];
+			[self setConsoleText];
+			[sharedConsole.consoleView scrollRangeToVisible:NSMakeRange(sharedConsole.consoleView.text.length, 0)];
+		}		
+		
+		if (&UIApplicationDidEnterBackgroundNotification != NULL)
+		{
+			[[NSNotificationCenter defaultCenter] addObserver:self
+													 selector:@selector(savePreferences)
+														 name:UIApplicationDidEnterBackgroundNotification
+													   object:nil];
+		}
+
+		[[NSNotificationCenter defaultCenter] addObserver:self
+												 selector:@selector(savePreferences)
+													 name:UIApplicationWillTerminateNotification
+												   object:nil];
+#endif
+		
+	}
+	return self;
+}
+
+- (void)viewDidLoad
+{
+	self.view.backgroundColor = CONSOLE_BACKGROUND_COLOR;
+	
+	consoleView = [[UITextView alloc] initWithFrame:self.view.bounds];
+	consoleView.font = [UIFont fontWithName:@"Courier" size:12];
+	consoleView.textColor = CONSOLE_TEXT_COLOR;
+	consoleView.backgroundColor = [UIColor clearColor];
+	consoleView.editable = NO;
+	
+	[self setConsoleText];
+	[self.view addSubview:consoleView];
+	
+	self.infoButton = [UIButton buttonWithType:CONSOLE_BUTTON_TYPE];
+	infoButton.frame = CGRectMake(self.view.frame.size.width - INFOBUTTON_WIDTH - 5,
+								  self.view.frame.size.height - EDITFIELD_HEIGHT - 5,
+								  INFOBUTTON_WIDTH, EDITFIELD_HEIGHT);
+	[infoButton addTarget:self action:@selector(infoAction) forControlEvents:UIControlEventTouchUpInside];
+	[self.view addSubview:infoButton];
+	
+	if (delegate)
+	{
+		inputField = [[UITextField alloc] initWithFrame:CGRectMake(5, self.view.frame.size.height - EDITFIELD_HEIGHT - 5,
+																   self.view.frame.size.width - 15 - INFOBUTTON_WIDTH,
+																   EDITFIELD_HEIGHT)];
+		inputField.borderStyle = UITextBorderStyleRoundedRect;
+		inputField.font = [UIFont fontWithName:@"Courier" size:12];
+		inputField.autocapitalizationType = UITextAutocapitalizationTypeNone;
+		inputField.autocorrectionType = UITextAutocorrectionTypeNo;
+		inputField.returnKeyType = UIReturnKeyDone;
+		inputField.enablesReturnKeyAutomatically = NO;
+		inputField.clearButtonMode = UITextFieldViewModeWhileEditing;
+		inputField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
+		inputField.placeholder = CONSOLE_INPUT_PLACEHOLDER;
+		inputField.delegate = self;
+		consoleView.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height - EDITFIELD_HEIGHT - 10);
+		[self.view addSubview:inputField];
+		
+		[[NSNotificationCenter defaultCenter] addObserver:self
+												 selector:@selector(keyboardWillShow:)
+													 name:UIKeyboardWillShowNotification
+												   object:nil];
+		
+		[[NSNotificationCenter defaultCenter] addObserver:self
+												 selector:@selector(keyboardWillHide:)
+													 name:UIKeyboardWillHideNotification
+												   object:nil];
+	}
+	
+	[sharedConsole.consoleView scrollRangeToVisible:NSMakeRange(sharedConsole.consoleView.text.length, 0)];
+}
+
+- (void)viewDidUnload
+{
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+	
+	self.consoleView = nil;
+	self.inputField = nil;
+	self.infoButton = nil;
+}
+
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+	
+	[consoleView release];
+	[inputField release];
+	[infoButton release];
+	[log release];
+	[super dealloc];
+}
+
+
+#pragma mark -
+#pragma mark Public methods
+
++ (void)log:(NSString *)format arguments:(va_list)argList
+{	
+	NSString *message = [[[NSString alloc] initWithFormat:format arguments:argList] autorelease];
+	NSLog(@"%@", message);
+	
+#if defined CONSOLE_ENABLED && CONSOLE_ENABLED
+	
+	[[self sharedConsole].log insertObject:[@"> " stringByAppendingString:message] atIndex:[sharedConsole.log count] - 1];
+	sharedConsole.consoleView.text = [sharedConsole.consoleView.text stringByAppendingFormat:@"%@\n> ", message];
+	
+	if ([sharedConsole.log count] > MAX_LOG_ITEMS)
+	{
+		NSUInteger lineLength = [[sharedConsole.log objectAtIndex:0] length];
+		sharedConsole.consoleView.text = [sharedConsole.consoleView.text substringFromIndex:lineLength + 1];
+		[sharedConsole.log removeObjectAtIndex:0];
+	}
+	
+	[sharedConsole.consoleView scrollRangeToVisible:NSMakeRange(sharedConsole.consoleView.text.length, 0)];
+	
+#endif
+
+}
+
++ (void)log:(NSString *)format, ...
+{
+
+#if LOG_LEVEL > LOG_LEVEL_NONE
+	
+	va_list argList;
+	va_start(argList,format);
+	[self log:format arguments:argList];
+	va_end(argList);
+	
+#endif
+	
+}
+
++ (void)info:(NSString *)format, ...
+{
+	
+#if LOG_LEVEL >= LOG_LEVEL_INFO
+	
+	va_list argList;
+	va_start(argList, format);
+	[self log:[@"INFO: " stringByAppendingString:format] arguments:argList];
+	va_end(argList);
+	
+#endif
+	
+}
+
++ (void)warn:(NSString *)format, ...
+{
+	
+#if LOG_LEVEL >= LOG_LEVEL_WARNING
+	
+	va_list argList;
+	va_start(argList, format);
+	[self log:[@"WARNING: " stringByAppendingString:format] arguments:argList];
+	va_end(argList);
+	
+#endif
+
+}
+
++ (void)error:(NSString *)format, ...
+{
+	
+#if LOG_LEVEL >= LOG_LEVEL_ERROR
+	
+	va_list argList;
+	va_start(argList, format);
+	[self log:[@"ERROR: " stringByAppendingString:format] arguments:argList];
+	va_end(argList);
+	
+#endif
+	
+}
+
++ (void)crash:(NSString *)format, ...
+{
+	
+#if LOG_LEVEL >= LOG_LEVEL_CRASH
+	
+	va_list argList;
+	va_start(argList, format);
+	[self log:[@"CRASH: " stringByAppendingString:format] arguments:argList];
+	va_end(argList);
+	
+#endif
+	
+}
+
++ (void)clear
+{
+	[[iConsole sharedConsole] resetLog];
+}
+
++ (void)show
+{
+	[[iConsole sharedConsole] showConsole];
+}
+
++ (void)hide
+{
+	[[iConsole sharedConsole] hideConsole];
+}
+
+@end
