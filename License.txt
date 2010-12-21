@@ -1,5 +1,5 @@
 iConsole
-version 1.0, December 21st, 2010
+version 1.1, December 21st, 2010
 
 Copyright (C) 2010 Charcoal Design
 
@@ -24,7 +24,7 @@ freely, subject to the following restrictions:
 Google GTM library
 
 iConsole has a dependency on parts of the Google GTM library, which is
-licenced under the Apache 2.0 licence:
+licensed under the Apache 2.0 licence:
 
 http://www.apache.org/licenses/LICENSE-2.0
 

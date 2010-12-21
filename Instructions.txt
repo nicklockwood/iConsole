@@ -23,7 +23,7 @@ into your project. iConsole has no other dependencies.
 To enable iConsole in your application, replace your main window with an
 instance of the iConsoleWindow. If you are using a standard project template,
 the easiest way to do this is to change the class of your window in the
-mainwindow.nib file. If you are already using a custom window subclass, change
+MainWindow.xib file. If you are already using a custom window subclass, change
 the base class to iConsoleWindow.
 
 
@@ -97,10 +97,10 @@ CONSOLE_ENABLED - set this to 0 to disable the console. It is a good idea to
 set this using a compiler macro in your project target settings so it can be
 switched off in your release build.
 
-LOG_LEVEL - depending on your use og logging in the project, the log may fill
+LOG_LEVEL - depending on your use of logging in the project, the log may fill
 up quickly. Use the log level to selectively disable logs based on severity.
 You can use the LOG_LEVEL_XXX constants for this. LOG_LEVEL_NONE will disable
-all loggin. LOG_LEVEL_INFO will enable all logging levels.
+all logging. LOG_LEVEL_INFO will enable all logging levels.
 
 ADD_CRASH_HANDLER - if enabled this will automatically log a stack trace to the
 console in event of a fatal exception.
@@ -113,11 +113,17 @@ you can safely remove the GTM source files from the project.
 SAVE_LOG_TO_DISK - if this option is disabled, logs will not be saved between
 sessions. Note that the ADD_CRASH_HANDLER feature is useless if this is not set.
 
-DEVICE_CONSOLE_TOUCHES - the number of fingers needed for the console activation
-swipe. More than three is difficult to pull off on an iPhone unless you have
-very small fingers. More than two is impossible to execute in the simulator. If
-your app makes use of tow or three fingered swipes for other interactions you
-may wish to increase this however.
+DEVICE/SIMULATOR_CONSOLE_TOUCHES - the number of fingers needed for the console
+activation swipe. More than three is difficult to pull off on an iPhone unless
+you have very small fingers. More than two is impossible to execute in the
+simulator. If your app makes use of two or three fingered swipes for other
+interactions you may wish to increase this however. If you do not wish to allow
+swipe activation of the console, set the touches count to 0 or some in-feasibly
+large number.
+
+DEVICE/SIMULATOR_SHAKE_TO_SHOW_CONSOLE - if swiping is not an appropriate
+activation method in your app, you can optionally enable shake-to-show instead.
+This is certainly a less fiddly option in the simulator.
 
 CONSOLE_BRANDING - the text that appears at the top of the console. This
 contains the Charcoal Design copyright by default, but you are permitted to
@@ -141,3 +147,5 @@ two fingers on the simulator. To simulate a two-fingered swipe, hold alt+shift.
 
 To hide the console again, swipe down.
 
+To test crash logging, press the Crash button, which will throw an exception
+and crash the app.

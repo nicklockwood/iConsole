@@ -1,6 +1,6 @@
 //
 //  iConsole.h
-//  HelloWorld
+//  iConsole
 //
 //  Created by Nick Lockwood on 20/12/2010.
 //  Copyright 2010 Charcoal Design. All rights reserved.
@@ -24,6 +24,9 @@
 
 #define SIMULATOR_CONSOLE_TOUCHES 2 //touches to show/hide console on simulator
 #define DEVICE_CONSOLE_TOUCHES 3 //touches to show/hide console on device
+
+#define SIMULATOR_SHAKE_TO_SHOW_CONSOLE 1 //show/hide console when simulating shake
+#define DEVICE_SHAKE_TO_SHOW_CONSOLE 0 //show/hide console when device is shaken
 
 #define CONSOLE_BRANDING @"iConsole: Copyright © 2010 Charcoal Design"
 #define CONSOLE_INPUT_PLACEHOLDER @"Enter command..."

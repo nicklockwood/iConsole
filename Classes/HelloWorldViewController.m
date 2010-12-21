@@ -31,6 +31,11 @@
     [iConsole sharedConsole].delegate = self;
 }
 
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
+	return YES;
+}
+
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {	
 	[textField resignFirstResponder];

@@ -7,6 +7,7 @@
 //
 
 #import "iConsoleWindow.h"
+#import "iConsole.h"
 
 
 @implementation iConsoleWindow
@@ -56,6 +57,27 @@
 		
 	return [super sendEvent:event];
 }
+
+#	if (TARGET_IPHONE_SIMULATOR ? SIMULATOR_SHAKE_TO_SHOW_CONSOLE: DEVICE_SHAKE_TO_SHOW_CONSOLE) 
+
+- (void)motionEnded:(UIEventSubtype)motion withEvent:(UIEvent *)event {
+	
+    if (event.type == UIEventTypeMotion && event.subtype == UIEventSubtypeMotionShake)
+	{
+		if ([iConsole sharedConsole].view.superview == nil)
+		{
+			[iConsole show];
+		}
+		else
+		{
+			[iConsole hide];
+		}
+    }
+	
+	[super motionEnded:motion withEvent:event];
+}
+
+#	endif
 
 #endif
 

@@ -1,6 +1,6 @@
-    //
+//
 //  iConsole.m
-//  HelloWorld
+//  iConsole
 //
 //  Created by Nick Lockwood on 20/12/2010.
 //  Copyright 2010 Charcoal Design. All rights reserved.
@@ -78,6 +78,8 @@ void exceptionHandler(NSException *exception)
 						 (TARGET_IPHONE_SIMULATOR ? SIMULATOR_CONSOLE_TOUCHES: DEVICE_CONSOLE_TOUCHES),
 						 ((TARGET_IPHONE_SIMULATOR ? SIMULATOR_CONSOLE_TOUCHES: DEVICE_CONSOLE_TOUCHES) != 1)? @"s": @""],
 						@"--------------------------------------", [log componentsJoinedByString:@"\n"]];
+	
+	[consoleView scrollRangeToVisible:NSMakeRange(consoleView.text.length, 0)];
 }
 
 - (void)resetLog
@@ -90,58 +92,6 @@ void exceptionHandler(NSException *exception)
 {
 	[[NSUserDefaults standardUserDefaults] setObject:self.log forKey:@"iConsoleLog"];
 	[[NSUserDefaults standardUserDefaults] synchronize];
-}
-
-- (void)infoAction
-{
-	UIActionSheet *sheet = [[[UIActionSheet alloc] initWithTitle:@""
-														delegate:self
-											   cancelButtonTitle:@"Cancel"
-										  destructiveButtonTitle:@"Clear Log"
-											   otherButtonTitles:@"Send by Email", nil] autorelease];
-	
-	sheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
-	[sheet showInView:self.view];
-}
-
-- (void)keyboardWillShow:(NSNotification *)notification
-{	
-	CGRect frame = [[notification.userInfo valueForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
-	CGFloat duration = [[notification.userInfo valueForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
-	UIViewAnimationCurve curve = [[notification.userInfo valueForKey:UIKeyboardAnimationCurveUserInfoKey] intValue];
-	
-	[UIView beginAnimations:nil context:NULL];
-	[UIView setAnimationBeginsFromCurrentState:YES];
-	[UIView setAnimationDuration:duration];
-	[UIView setAnimationCurve:curve];
-	consoleView.frame = CGRectMake(0, 0, self.view.frame.size.width,
-								   self.view.frame.size.height - EDITFIELD_HEIGHT - 10 - frame.size.height);
-	inputField.frame = CGRectMake(5, self.view.frame.size.height - EDITFIELD_HEIGHT - 5 - frame.size.height,
-								  self.view.frame.size.width - 15 - INFOBUTTON_WIDTH, EDITFIELD_HEIGHT);
-	infoButton.frame = CGRectMake(self.view.frame.size.width - INFOBUTTON_WIDTH - 5,
-								  self.view.frame.size.height - EDITFIELD_HEIGHT - 5 - frame.size.height,
-								  INFOBUTTON_WIDTH, EDITFIELD_HEIGHT);
-	[UIView commitAnimations];
-}
-
-- (void)keyboardWillHide:(NSNotification *)notification
-{
-	CGFloat duration = [[notification.userInfo valueForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
-	UIViewAnimationCurve curve = [[notification.userInfo valueForKey:UIKeyboardAnimationCurveUserInfoKey] intValue];
-	
-	[UIView beginAnimations:nil context:NULL];
-	[UIView setAnimationBeginsFromCurrentState:YES];
-	[UIView setAnimationDuration:duration];
-	[UIView setAnimationCurve:curve];
-	consoleView.frame = CGRectMake(0, 0, self.view.frame.size.width,
-								   self.view.frame.size.height - EDITFIELD_HEIGHT - 10);
-	inputField.frame = CGRectMake(5, self.view.frame.size.height - EDITFIELD_HEIGHT - 5,
-								  self.view.frame.size.width - 15 - INFOBUTTON_WIDTH,
-								  EDITFIELD_HEIGHT);
-	infoButton.frame = CGRectMake(self.view.frame.size.width - INFOBUTTON_WIDTH - 5,
-								  self.view.frame.size.height - EDITFIELD_HEIGHT - 5,
-								  INFOBUTTON_WIDTH, EDITFIELD_HEIGHT);
-	[UIView commitAnimations];
 }
 
 - (BOOL)findAndResignFirstResponder:(UIView *)view
@@ -161,15 +111,69 @@ void exceptionHandler(NSException *exception)
     return NO;
 }
 
+- (void)infoAction
+{
+	[self findAndResignFirstResponder:[UIApplication sharedApplication].keyWindow];
+	
+	UIActionSheet *sheet = [[[UIActionSheet alloc] initWithTitle:@""
+														delegate:self
+											   cancelButtonTitle:@"Cancel"
+										  destructiveButtonTitle:@"Clear Log"
+											   otherButtonTitles:@"Send by Email", nil] autorelease];
+	
+	sheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
+	[sheet showInView:self.view];
+}
+
+- (CGAffineTransform)viewTransform
+{
+	CGFloat angle = 0;
+	switch ([UIApplication sharedApplication].statusBarOrientation) {
+		case UIInterfaceOrientationPortraitUpsideDown:
+			angle = M_PI;
+			break;
+		case UIInterfaceOrientationLandscapeLeft:
+			angle = -M_PI_2;
+			break;
+		case UIInterfaceOrientationLandscapeRight:
+			angle = M_PI_2;
+			break;
+	}
+	return CGAffineTransformMakeRotation(angle);
+}
+
+- (CGRect)onscreenFrame
+{
+	return [UIScreen mainScreen].applicationFrame;
+}
+
+- (CGRect)offscreenFrame
+{
+	CGRect frame = [self onscreenFrame];
+	switch ([UIApplication sharedApplication].statusBarOrientation) {
+		case UIInterfaceOrientationPortrait:
+			frame.origin.y = frame.size.height;
+			break;
+		case UIInterfaceOrientationPortraitUpsideDown:
+			frame.origin.y = -frame.size.height;
+			break;
+		case UIInterfaceOrientationLandscapeLeft:
+			frame.origin.x = frame.size.width;
+			break;
+		case UIInterfaceOrientationLandscapeRight:
+			frame.origin.x = -frame.size.width;
+			break;
+	}
+	return frame;
+}
+
 - (void)showConsole
 {	
 	if (!animating && self.view.superview == nil)
 	{
 		[self findAndResignFirstResponder:[[UIApplication sharedApplication] keyWindow]];
 		
-		CGRect frame = [UIScreen mainScreen].applicationFrame;
-		frame.origin.y = frame.size.height;
-		[iConsole sharedConsole].view.frame = frame;
+		[iConsole sharedConsole].view.frame = [self offscreenFrame];
 		[[[UIApplication sharedApplication] keyWindow] addSubview:[iConsole sharedConsole].view];
 		
 		animating = YES;
@@ -177,7 +181,7 @@ void exceptionHandler(NSException *exception)
 		[UIView setAnimationDuration:0.4];
 		[UIView setAnimationDelegate:self];
 		[UIView setAnimationDidStopSelector:@selector(consoleShown)];
-		[iConsole sharedConsole].view.frame = [UIScreen mainScreen].applicationFrame;
+		[iConsole sharedConsole].view.frame = [self onscreenFrame];
 		[UIView commitAnimations];
 	}
 }
@@ -195,13 +199,11 @@ void exceptionHandler(NSException *exception)
 		[self findAndResignFirstResponder:[[UIApplication sharedApplication] keyWindow]];
 		
 		animating = YES;
-		CGRect frame = [UIScreen mainScreen].applicationFrame;
-		frame.origin.y = frame.size.height;
 		[UIView beginAnimations:nil context:nil];
 		[UIView setAnimationDuration:0.4];
 		[UIView setAnimationDelegate:self];
 		[UIView setAnimationDidStopSelector:@selector(consoleHidden)];
-		[iConsole sharedConsole].view.frame = frame;
+		[iConsole sharedConsole].view.frame = [self offscreenFrame];
 		[UIView commitAnimations];
 	}
 }
@@ -212,6 +214,94 @@ void exceptionHandler(NSException *exception)
 	[[[iConsole sharedConsole] view] removeFromSuperview];
 }
 
+- (void)rotateView:(NSNotification *)notification
+{
+	self.view.transform = [self viewTransform];
+	self.view.frame = [self onscreenFrame];
+	
+	if (delegate != nil)
+	{
+		//workaround for autoresizeing glitch
+		CGRect frame = self.view.bounds;
+		frame.size.height -= EDITFIELD_HEIGHT + 10;
+		self.consoleView.frame = frame;
+	}
+}
+
+- (void)resizeView:(NSNotification *)notification
+{
+	CGRect frame = [[notification.userInfo valueForKey:UIApplicationStatusBarFrameUserInfoKey] CGRectValue];
+	CGRect bounds = [UIScreen mainScreen].bounds;
+	switch ([UIApplication sharedApplication].statusBarOrientation) {
+		case UIInterfaceOrientationPortrait:
+			bounds.origin.y += frame.size.height;
+			bounds.size.height -= frame.size.height;
+			break;
+		case UIInterfaceOrientationPortraitUpsideDown:
+			bounds.size.height -= frame.size.height;
+			break;
+		case UIInterfaceOrientationLandscapeLeft:
+			bounds.origin.x += frame.size.width;
+			bounds.size.width -= frame.size.width;
+			break;
+		case UIInterfaceOrientationLandscapeRight:
+			bounds.size.width -= frame.size.width;
+			break;
+	}
+	[UIView beginAnimations:nil context:nil];
+	[UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
+	[UIView setAnimationDuration:0.35];
+	self.view.frame = bounds;
+	[UIView commitAnimations];
+}
+
+- (void)keyboardWillShow:(NSNotification *)notification
+{	
+	CGRect frame = [[notification.userInfo valueForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
+	CGFloat duration = [[notification.userInfo valueForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
+	UIViewAnimationCurve curve = [[notification.userInfo valueForKey:UIKeyboardAnimationCurveUserInfoKey] intValue];
+	
+	[UIView beginAnimations:nil context:NULL];
+	[UIView setAnimationBeginsFromCurrentState:YES];
+	[UIView setAnimationDuration:duration];
+	[UIView setAnimationCurve:curve];
+	
+	CGRect bounds = [self onscreenFrame];
+	switch ([UIApplication sharedApplication].statusBarOrientation) {
+		case UIInterfaceOrientationPortrait:
+			bounds.size.height -= frame.size.height;
+			break;
+		case UIInterfaceOrientationPortraitUpsideDown:
+			bounds.origin.y += frame.size.height;
+			bounds.size.height -= frame.size.height;
+			break;
+		case UIInterfaceOrientationLandscapeLeft:
+			bounds.size.width -= frame.size.width;
+			break;
+		case UIInterfaceOrientationLandscapeRight:
+			bounds.origin.x += frame.size.width;
+			bounds.size.width -= frame.size.width;
+			break;
+	}
+	self.view.frame = bounds;
+	
+	[UIView commitAnimations];
+}
+
+- (void)keyboardWillHide:(NSNotification *)notification
+{
+	CGFloat duration = [[notification.userInfo valueForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
+	UIViewAnimationCurve curve = [[notification.userInfo valueForKey:UIKeyboardAnimationCurveUserInfoKey] intValue];
+	
+	[UIView beginAnimations:nil context:NULL];
+	[UIView setAnimationBeginsFromCurrentState:YES];
+	[UIView setAnimationDuration:duration];
+	[UIView setAnimationCurve:curve];
+	
+	self.view.frame = [self onscreenFrame];	
+	
+	[UIView commitAnimations];
+}
 
 #pragma mark -
 #pragma mark UITextFieldDelegate methods
@@ -306,8 +396,6 @@ void exceptionHandler(NSException *exception)
 		if (loadedLog && [loadedLog count] > 0)
 		{
 			self.log = [[loadedLog mutableCopy] autorelease];
-			[self setConsoleText];
-			[sharedConsole.consoleView scrollRangeToVisible:NSMakeRange(sharedConsole.consoleView.text.length, 0)];
 		}		
 		
 		if (&UIApplicationDidEnterBackgroundNotification != NULL)
@@ -322,6 +410,16 @@ void exceptionHandler(NSException *exception)
 												 selector:@selector(savePreferences)
 													 name:UIApplicationWillTerminateNotification
 												   object:nil];
+		
+		[[NSNotificationCenter defaultCenter] addObserver:self
+												 selector:@selector(rotateView:)
+													 name:UIApplicationDidChangeStatusBarOrientationNotification
+												   object:nil];
+		
+		[[NSNotificationCenter defaultCenter] addObserver:self
+												 selector:@selector(resizeView:)
+													 name:UIApplicationWillChangeStatusBarFrameNotification
+												   object:nil];
 #endif
 		
 	}
@@ -331,13 +429,14 @@ void exceptionHandler(NSException *exception)
 - (void)viewDidLoad
 {
 	self.view.backgroundColor = CONSOLE_BACKGROUND_COLOR;
-	
+	self.view.autoresizesSubviews = YES;
+
 	consoleView = [[UITextView alloc] initWithFrame:self.view.bounds];
 	consoleView.font = [UIFont fontWithName:@"Courier" size:12];
 	consoleView.textColor = CONSOLE_TEXT_COLOR;
 	consoleView.backgroundColor = [UIColor clearColor];
 	consoleView.editable = NO;
-	
+	consoleView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
 	[self setConsoleText];
 	[self.view addSubview:consoleView];
 	
@@ -346,6 +445,7 @@ void exceptionHandler(NSException *exception)
 								  self.view.frame.size.height - EDITFIELD_HEIGHT - 5,
 								  INFOBUTTON_WIDTH, EDITFIELD_HEIGHT);
 	[infoButton addTarget:self action:@selector(infoAction) forControlEvents:UIControlEventTouchUpInside];
+	infoButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin;
 	[self.view addSubview:infoButton];
 	
 	if (delegate)
@@ -362,8 +462,11 @@ void exceptionHandler(NSException *exception)
 		inputField.clearButtonMode = UITextFieldViewModeWhileEditing;
 		inputField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
 		inputField.placeholder = CONSOLE_INPUT_PLACEHOLDER;
+		inputField.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
 		inputField.delegate = self;
-		consoleView.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height - EDITFIELD_HEIGHT - 10);
+		CGRect frame = self.view.bounds;
+		frame.size.height -= EDITFIELD_HEIGHT + 10;
+		consoleView.frame = frame;
 		[self.view addSubview:inputField];
 		
 		[[NSNotificationCenter defaultCenter] addObserver:self
@@ -376,7 +479,7 @@ void exceptionHandler(NSException *exception)
 													 name:UIKeyboardWillHideNotification
 												   object:nil];
 	}
-	
+
 	[sharedConsole.consoleView scrollRangeToVisible:NSMakeRange(sharedConsole.consoleView.text.length, 0)];
 }
 

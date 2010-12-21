@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "iConsole.h"
 
 
 @interface iConsoleWindow : UIWindow

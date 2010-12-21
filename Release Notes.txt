@@ -1,3 +1,11 @@
 Version 1.0
 
 - Initial release.
+
+Version 1.1
+
+- Added shake-to-show option
+- Fully tested on iPad
+- Fixed issue with pressing info button when keyboard is open
+- Correctly handles interface rotation
+- Correctly handles in-call status bar
