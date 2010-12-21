@@ -44,7 +44,7 @@
 
 @interface iConsole : UIViewController <UITextFieldDelegate, UIActionSheetDelegate>
 
-@property (nonatomic, retain) id<iConsoleDelegate> delegate;
+@property (nonatomic, assign) id<iConsoleDelegate> delegate;
 
 + (iConsole *)sharedConsole;
 
