@@ -1,5 +1,5 @@
 iConsole
-version 1.1, December 21st, 2010
+version 1.2, December 22nd, 2010
 
 Copyright (C) 2010 Charcoal Design
 
