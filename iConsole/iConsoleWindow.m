@@ -29,6 +29,8 @@
 		{
 			BOOL allUp = YES;
 			BOOL allDown = YES;
+			BOOL allLeft = YES;
+			BOOL allRight = YES;
 			
 			for (UITouch *touch in touches)
 			{
@@ -40,17 +42,65 @@
 				{
 					allUp = NO;
 				}
+				if ([touch locationInView:self].x <= [touch previousLocationInView:self].x)
+				{
+					allLeft = NO;
+				}
+				if ([touch locationInView:self].x >= [touch previousLocationInView:self].x)
+				{
+					allRight = NO;
+				}
 			}
 			
-			if (allUp)
-			{
-				[iConsole show];
-				return;
-			}
-			else if (allDown)
-			{
-				[iConsole hide];
-				return;
+			switch ([UIApplication sharedApplication].statusBarOrientation) {
+				case UIInterfaceOrientationPortrait:
+					if (allUp)
+					{
+						[iConsole show];
+						return;
+					}
+					else if (allDown)
+					{
+						[iConsole hide];
+						return;
+					}
+					break;
+				case UIInterfaceOrientationPortraitUpsideDown:
+					if (allDown)
+					{
+						[iConsole show];
+						return;
+					}
+					else if (allUp)
+					{
+						[iConsole hide];
+						return;
+					}
+					break;
+				case UIInterfaceOrientationLandscapeLeft:
+					if (allRight)
+					{
+						[iConsole show];
+						return;
+					}
+					else if (allLeft)
+					{
+						[iConsole hide];
+						return;
+					}
+					break;
+				case UIInterfaceOrientationLandscapeRight:
+					if (allLeft)
+					{
+						[iConsole show];
+						return;
+					}
+					else if (allRight)
+					{
+						[iConsole hide];
+						return;
+					}
+					break;
 			}
 		}
 	}

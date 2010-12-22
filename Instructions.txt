@@ -135,17 +135,3 @@ CONSOLE_INPUT_PLACEHOLDER - helper text that appears in the console input field.
 
 LOG_SUBMIT_EMAIL - the default "to" address when sending console logs via email
 from within the app.
-
-
-Example App
---------------
-
-You can try out the console by running the included HelloWorld example:
-
-To activate iConsole, swipe up using three fingers (by default) on an iPhone or
-two fingers on the simulator. To simulate a two-fingered swipe, hold alt+shift.
-
-To hide the console again, swipe down.
-
-To test crash logging, press the Crash button, which will throw an exception
-and crash the app.

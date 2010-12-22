@@ -11,3 +11,8 @@ Version 1.1
 - Correctly handles interface rotation
 - Correctly handles in-call status bar
 - Fixed bug when console exceeds max rows
+
+Version 1.2
+
+- Fixed swipe direction when device is rotated
+- Added instruction text to HelloWorld screen
