@@ -61,11 +61,11 @@ Command Interface
 
 As well as displaying logs, the console can also allow user command input. This is disabled by default. To enable it, you need to create a command delegate, which you do as follows:
 
-    1) Implement the iConsoleDelegate protocol on one of your classes. It doesn't matter which one, but it should be a persistent class that will exist for the duration of the app's lifetime, e.g. your app delegate or main view controller.
+1) Implement the iConsoleDelegate protocol on one of your classes. It doesn't matter which one, but it should be a persistent class that will exist for the duration of the app's lifetime, e.g. your app delegate or main view controller.
     
-    2) Add the handleConsoleCommand: method to your delegate class. This receives a single string representing the command that the user has typed. iConsole does not place any restriction on the command syntax, or provide any helper methods for processing commands at this time.
+2) Add the handleConsoleCommand: method to your delegate class. This receives a single string representing the command that the user has typed. iConsole does not place any restriction on the command syntax, or provide any helper methods for processing commands at this time.
     
-    3) Use the following code to set your class as the delegate for the iConsole. Note that this code must be called BEFORE the console is first shown, or the input field will not appear:
+3) Use the following code to set your class as the delegate for the iConsole. Note that this code must be called BEFORE the console is first shown, or the input field will not appear:
 
     [iConsole sharedConsole].delegate = myDelegate;
 
