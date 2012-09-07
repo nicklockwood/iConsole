@@ -16,9 +16,9 @@
 	UITextField *field;
 }
 
-@property (nonatomic, retain) IBOutlet UILabel *label;
-@property (nonatomic, retain) IBOutlet UITextField *field;
-@property (nonatomic, retain) IBOutlet UILabel *swipeLabel;
+@property (nonatomic, strong) IBOutlet UILabel *label;
+@property (nonatomic, strong) IBOutlet UITextField *field;
+@property (nonatomic, strong) IBOutlet UILabel *swipeLabel;
 
 - (IBAction)sayHello:(id)sender;
 - (IBAction)crash:(id)sender;

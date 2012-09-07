@@ -1,6 +1,12 @@
-Version 1.0
+Version 1.3
 
-- Initial release.
+- Updated project structure
+- Added ARC support
+
+Version 1.2
+
+- Fixed swipe direction when device is rotated
+- Added instruction text to HelloWorld screen
 
 Version 1.1
 
@@ -12,7 +18,7 @@ Version 1.1
 - Correctly handles in-call status bar
 - Fixed bug when console exceeds max rows
 
-Version 1.2
+Version 1.0
 
-- Fixed swipe direction when device is rotated
-- Added instruction text to HelloWorld screen
+- Initial release.
+

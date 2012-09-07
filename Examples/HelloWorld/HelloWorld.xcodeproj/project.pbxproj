@@ -3,15 +3,16 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 45;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		01D6087312BFF40E007E5123 /* GTMStackTrace.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D6087212BFF40E007E5123 /* GTMStackTrace.m */; };
-		01D6087D12BFF526007E5123 /* GTMObjC2Runtime.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D6087C12BFF526007E5123 /* GTMObjC2Runtime.m */; };
 		01D60A6E12C1612D007E5123 /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = 01D60A6B12C1612D007E5123 /* Icon-72.png */; };
 		01D60A6F12C1612D007E5123 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 01D60A6C12C1612D007E5123 /* Icon.png */; };
 		01D60A7012C1612D007E5123 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 01D60A6D12C1612D007E5123 /* Icon@2x.png */; };
+		01DE424815FA3ACC0051C538 /* GTMObjC2Runtime.m in Sources */ = {isa = PBXBuildFile; fileRef = 01DE424015FA3ACC0051C538 /* GTMObjC2Runtime.m */; };
+		01DE424915FA3ACC0051C538 /* GTMStackTrace.m in Sources */ = {isa = PBXBuildFile; fileRef = 01DE424215FA3ACC0051C538 /* GTMStackTrace.m */; };
+		01DE424A15FA3ACC0051C538 /* iConsole.m in Sources */ = {isa = PBXBuildFile; fileRef = 01DE424515FA3ACC0051C538 /* iConsole.m */; };
 		1D3623260D0F684500981E51 /* HelloWorldAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* HelloWorldAppDelegate.m */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
@@ -20,19 +21,19 @@
 		2899E5220DE3E06400AC0155 /* HelloWorldViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2899E5210DE3E06400AC0155 /* HelloWorldViewController.xib */; };
 		28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28AD733E0D9D9553002E5188 /* MainWindow.xib */; };
 		28D7ACF80DDB3853001CB0EB /* HelloWorldViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28D7ACF70DDB3853001CB0EB /* HelloWorldViewController.m */; };
-		B267512A12BFC72E002364F8 /* iConsole.m in Sources */ = {isa = PBXBuildFile; fileRef = B267512712BFC72E002364F8 /* iConsole.m */; };
-		B267512B12BFC72E002364F8 /* iConsoleWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = B267512912BFC72E002364F8 /* iConsoleWindow.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		01D6087012BFF40E007E5123 /* GTMDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMDefines.h; sourceTree = "<group>"; };
-		01D6087112BFF40E007E5123 /* GTMStackTrace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMStackTrace.h; sourceTree = "<group>"; };
-		01D6087212BFF40E007E5123 /* GTMStackTrace.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTMStackTrace.m; sourceTree = "<group>"; };
-		01D6087B12BFF526007E5123 /* GTMObjC2Runtime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMObjC2Runtime.h; sourceTree = "<group>"; };
-		01D6087C12BFF526007E5123 /* GTMObjC2Runtime.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTMObjC2Runtime.m; sourceTree = "<group>"; };
 		01D60A6B12C1612D007E5123 /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72.png"; sourceTree = "<group>"; };
 		01D60A6C12C1612D007E5123 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
 		01D60A6D12C1612D007E5123 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
+		01DE423E15FA3ACC0051C538 /* GTMDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMDefines.h; sourceTree = "<group>"; };
+		01DE423F15FA3ACC0051C538 /* GTMObjC2Runtime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMObjC2Runtime.h; sourceTree = "<group>"; };
+		01DE424015FA3ACC0051C538 /* GTMObjC2Runtime.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTMObjC2Runtime.m; sourceTree = "<group>"; };
+		01DE424115FA3ACC0051C538 /* GTMStackTrace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMStackTrace.h; sourceTree = "<group>"; };
+		01DE424215FA3ACC0051C538 /* GTMStackTrace.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTMStackTrace.m; sourceTree = "<group>"; };
+		01DE424415FA3ACC0051C538 /* iConsole.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iConsole.h; sourceTree = "<group>"; };
+		01DE424515FA3ACC0051C538 /* iConsole.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iConsole.m; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D3623240D0F684500981E51 /* HelloWorldAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HelloWorldAppDelegate.h; sourceTree = "<group>"; };
 		1D3623250D0F684500981E51 /* HelloWorldAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HelloWorldAppDelegate.m; sourceTree = "<group>"; };
@@ -46,10 +47,6 @@
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* HelloWorld_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HelloWorld_Prefix.pch; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* HelloWorld-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "HelloWorld-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
-		B267512612BFC72E002364F8 /* iConsole.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iConsole.h; sourceTree = "<group>"; };
-		B267512712BFC72E002364F8 /* iConsole.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iConsole.m; sourceTree = "<group>"; };
-		B267512812BFC72E002364F8 /* iConsoleWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iConsoleWindow.h; sourceTree = "<group>"; };
-		B267512912BFC72E002364F8 /* iConsoleWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iConsoleWindow.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,16 +63,25 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		01D6086F12BFF40E007E5123 /* GTM */ = {
+		01DE423D15FA3ACC0051C538 /* GTM */ = {
 			isa = PBXGroup;
 			children = (
-				01D6087012BFF40E007E5123 /* GTMDefines.h */,
-				01D6087B12BFF526007E5123 /* GTMObjC2Runtime.h */,
-				01D6087C12BFF526007E5123 /* GTMObjC2Runtime.m */,
-				01D6087112BFF40E007E5123 /* GTMStackTrace.h */,
-				01D6087212BFF40E007E5123 /* GTMStackTrace.m */,
+				01DE423E15FA3ACC0051C538 /* GTMDefines.h */,
+				01DE423F15FA3ACC0051C538 /* GTMObjC2Runtime.h */,
+				01DE424015FA3ACC0051C538 /* GTMObjC2Runtime.m */,
+				01DE424115FA3ACC0051C538 /* GTMStackTrace.h */,
+				01DE424215FA3ACC0051C538 /* GTMStackTrace.m */,
 			);
 			path = GTM;
+			sourceTree = "<group>";
+		};
+		01DE424315FA3ACC0051C538 /* iConsole */ = {
+			isa = PBXGroup;
+			children = (
+				01DE424415FA3ACC0051C538 /* iConsole.h */,
+				01DE424515FA3ACC0051C538 /* iConsole.m */,
+			);
+			path = iConsole;
 			sourceTree = "<group>";
 		};
 		080E96DDFE201D6D7F000001 /* Classes */ = {
@@ -100,8 +106,8 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
-				01D6086F12BFF40E007E5123 /* GTM */,
-				B267512512BFC72E002364F8 /* iConsole */,
+				01DE423D15FA3ACC0051C538 /* GTM */,
+				01DE424315FA3ACC0051C538 /* iConsole */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
@@ -143,17 +149,6 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		B267512512BFC72E002364F8 /* iConsole */ = {
-			isa = PBXGroup;
-			children = (
-				B267512612BFC72E002364F8 /* iConsole.h */,
-				B267512712BFC72E002364F8 /* iConsole.m */,
-				B267512812BFC72E002364F8 /* iConsoleWindow.h */,
-				B267512912BFC72E002364F8 /* iConsoleWindow.m */,
-			);
-			path = iConsole;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -179,8 +174,11 @@
 /* Begin PBXProject section */
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0440;
+			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "HelloWorld" */;
-			compatibilityVersion = "Xcode 3.1";
+			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
@@ -221,10 +219,9 @@
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
 				1D3623260D0F684500981E51 /* HelloWorldAppDelegate.m in Sources */,
 				28D7ACF80DDB3853001CB0EB /* HelloWorldViewController.m in Sources */,
-				B267512A12BFC72E002364F8 /* iConsole.m in Sources */,
-				B267512B12BFC72E002364F8 /* iConsoleWindow.m in Sources */,
-				01D6087312BFF40E007E5123 /* GTMStackTrace.m in Sources */,
-				01D6087D12BFF526007E5123 /* GTMObjC2Runtime.m in Sources */,
+				01DE424815FA3ACC0051C538 /* GTMObjC2Runtime.m in Sources */,
+				01DE424915FA3ACC0051C538 /* GTMStackTrace.m in Sources */,
+				01DE424A15FA3ACC0051C538 /* iConsole.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -236,6 +233,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -253,6 +251,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = HelloWorld_Prefix.pch;
@@ -271,7 +270,6 @@
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				PREBINDING = NO;
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -284,8 +282,7 @@
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				PREBINDING = NO;
-				SDKROOT = iphoneos3.1.3;
+				SDKROOT = iphoneos;
 			};
 			name = Release;
 		};

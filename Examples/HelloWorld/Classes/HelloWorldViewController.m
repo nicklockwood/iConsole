@@ -87,7 +87,6 @@
 	[label release];
 	[field release];
 	[swipeLabel release];
-    [super dealloc];
 }
 
 @end

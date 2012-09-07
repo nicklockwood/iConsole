@@ -1,6 +1,6 @@
 iConsole
-version 1.2, December 22nd, 2010
 
+version 1.3, September 7th, 2012
 Copyright (C) 2010 Charcoal Design
 
 This software is provided 'as-is', without any express or implied
@@ -15,8 +15,10 @@ freely, subject to the following restrictions:
    claim that you wrote the original software. If you use this software
    in a product, an acknowledgment in the product documentation would be
    appreciated but is not required.
+   
 2. Altered source versions must be plainly marked as such, and must not be
    misrepresented as being the original software.
+   
 3. This notice may not be removed or altered from any source distribution.
 
 --------------
