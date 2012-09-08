@@ -25,7 +25,9 @@ iConsole automatically works with both ARC and non-ARC projects through conditio
 Installation
 --------------
 
-To install iConsole into your app, drag the iConsole and (optionally) GTM folder into your project. iConsole has no other dependencies.
+To install iConsole into your app, drag the iConsole and (optionally) GTM folder into your project. iConsole has no other dependencies. If you need to update the GTM classes, you can check out the latest version using:
+
+    svn checkout http://google-toolbox-for-mac.googlecode.com/svn/trunk/ google-toolbox-for-mac-read-only
 
 To enable iConsole in your application, replace your main window with an instance of the iConsoleWindow. If you are using a standard project template, the easiest way to do this is to change the class of your window in the MainWindow.xib file, or the AppDelegate.m if your window is created programmatically. If you are already using a custom window subclass, change the base class to iConsoleWindow.
 

@@ -21,9 +21,13 @@
 #include <AvailabilityMacros.h>
 #include <TargetConditionals.h>
 
+#ifdef __OBJC__
+#include <Foundation/NSObjCRuntime.h>
+#endif  // __OBJC__
+
 #if TARGET_OS_IPHONE
 #include <Availability.h>
-#endif //  TARGET_OS_IPHONE
+#endif  // TARGET_OS_IPHONE
 
 // Not all MAC_OS_X_VERSION_10_X macros defined in past SDKs
 #ifndef MAC_OS_X_VERSION_10_5
@@ -32,14 +36,11 @@
 #ifndef MAC_OS_X_VERSION_10_6
   #define MAC_OS_X_VERSION_10_6 1060
 #endif
+#ifndef MAC_OS_X_VERSION_10_7
+  #define MAC_OS_X_VERSION_10_7 1070
+#endif
 
 // Not all __IPHONE_X macros defined in past SDKs
-#ifndef __IPHONE_2_1
-  #define __IPHONE_2_1 20100
-#endif
-#ifndef __IPHONE_2_2
-  #define __IPHONE_2_2 20200
-#endif
 #ifndef __IPHONE_3_0
   #define __IPHONE_3_0 30000
 #endif
@@ -51,6 +52,12 @@
 #endif
 #ifndef __IPHONE_4_0
   #define __IPHONE_4_0 40000
+#endif
+#ifndef __IPHONE_4_3
+  #define __IPHONE_4_3 40300
+#endif
+#ifndef __IPHONE_5_0
+  #define __IPHONE_5_0 50000
 #endif
 
 // ----------------------------------------------------------------------------
@@ -71,7 +78,7 @@
 // a few different actual definitions, so we're based off of the foundation
 // one.
 #if !defined(GTM_INLINE)
-  #if defined (__GNUC__) && (__GNUC__ == 4)
+  #if (defined (__GNUC__) && (__GNUC__ == 4)) || defined (__clang__)
     #define GTM_INLINE static __inline__ __attribute__((always_inline))
   #else
     #define GTM_INLINE static __inline__
@@ -190,6 +197,12 @@
   #else
     #define GTM_IPHONE_DEVICE 1
   #endif  // TARGET_IPHONE_SIMULATOR
+  // By default, GTM has provided it's own unittesting support, define this
+  // to use the support provided by Xcode, especially for the Xcode4 support
+  // for unittesting.
+  #ifndef GTM_IPHONE_USE_SENTEST
+    #define GTM_IPHONE_USE_SENTEST 0
+  #endif
 #else
   // For MacOS specific stuff
   #define GTM_MACOS_SDK 1
@@ -294,6 +307,30 @@
   #endif
 #endif
 
+#ifndef NS_CONSUMED
+  #if __has_feature(attribute_ns_consumed)
+    #define NS_CONSUMED __attribute__((ns_consumed))
+  #else
+    #define NS_CONSUMED
+  #endif
+#endif
+
+#ifndef CF_CONSUMED
+  #if __has_feature(attribute_cf_consumed)
+    #define CF_CONSUMED __attribute__((cf_consumed))
+  #else
+    #define CF_CONSUMED
+  #endif
+#endif
+
+#ifndef NS_CONSUMES_SELF
+  #if __has_feature(attribute_ns_consumes_self)
+    #define NS_CONSUMES_SELF __attribute__((ns_consumes_self))
+  #else
+    #define NS_CONSUMES_SELF
+  #endif
+#endif
+
 // Defined on 10.6 and above.
 #ifndef NS_FORMAT_ARGUMENT
   #define NS_FORMAT_ARGUMENT(A)
@@ -318,12 +355,31 @@
   #define GTM_NONNULL(x) __attribute__((nonnull(x)))
 #endif
 
+// Invalidates the initializer from which it's called.
+#ifndef GTMInvalidateInitializer
+  #if __has_feature(objc_arc)
+    #define GTMInvalidateInitializer() \
+      do { \
+        [self class]; /* Avoid warning of dead store to |self|. */ \
+        _GTMDevAssert(NO, @"Invalid initializer."); \
+        return nil; \
+      } while (0)
+  #else
+    #define GTMInvalidateInitializer() \
+      do { \
+        [self release]; \
+        _GTMDevAssert(NO, @"Invalid initializer."); \
+        return nil; \
+      } while (0)
+  #endif
+#endif
+
 #ifdef __OBJC__
 
 // Declared here so that it can easily be used for logging tracking if
 // necessary. See GTMUnitTestDevLog.h for details.
 @class NSString;
-GTM_EXTERN void _GTMUnitTestDevLog(NSString *format, ...);
+GTM_EXTERN void _GTMUnitTestDevLog(NSString *format, ...) NS_FORMAT_FUNCTION(1, 2);
 
 // Macro to allow you to create NSStrings out of other macros.
 // #define FOO foo
@@ -385,4 +441,4 @@ GTM_EXTERN void _GTMUnitTestDevLog(NSString *format, ...);
   #endif  // DEBUG
 #endif  // GTM_SEL_STRING
 
-#endif // __OBJC__
+#endif  // __OBJC__
