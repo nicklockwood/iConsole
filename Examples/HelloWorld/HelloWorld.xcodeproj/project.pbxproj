@@ -7,12 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		01924572160F3098005A22BB /* iConsole.m in Sources */ = {isa = PBXBuildFile; fileRef = 01924571160F3098005A22BB /* iConsole.m */; };
+		01924574160F30A5005A22BB /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 01924573160F30A5005A22BB /* Default-568h@2x.png */; };
 		01D60A6E12C1612D007E5123 /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = 01D60A6B12C1612D007E5123 /* Icon-72.png */; };
 		01D60A6F12C1612D007E5123 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 01D60A6C12C1612D007E5123 /* Icon.png */; };
 		01D60A7012C1612D007E5123 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 01D60A6D12C1612D007E5123 /* Icon@2x.png */; };
 		01DE424815FA3ACC0051C538 /* GTMObjC2Runtime.m in Sources */ = {isa = PBXBuildFile; fileRef = 01DE424015FA3ACC0051C538 /* GTMObjC2Runtime.m */; };
 		01DE424915FA3ACC0051C538 /* GTMStackTrace.m in Sources */ = {isa = PBXBuildFile; fileRef = 01DE424215FA3ACC0051C538 /* GTMStackTrace.m */; };
-		01DE424A15FA3ACC0051C538 /* iConsole.m in Sources */ = {isa = PBXBuildFile; fileRef = 01DE424515FA3ACC0051C538 /* iConsole.m */; };
 		1D3623260D0F684500981E51 /* HelloWorldAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* HelloWorldAppDelegate.m */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
@@ -24,6 +25,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		01924570160F3098005A22BB /* iConsole.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iConsole.h; sourceTree = "<group>"; };
+		01924571160F3098005A22BB /* iConsole.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iConsole.m; sourceTree = "<group>"; };
+		01924573160F30A5005A22BB /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		01D60A6B12C1612D007E5123 /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72.png"; sourceTree = "<group>"; };
 		01D60A6C12C1612D007E5123 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
 		01D60A6D12C1612D007E5123 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
@@ -32,8 +36,6 @@
 		01DE424015FA3ACC0051C538 /* GTMObjC2Runtime.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTMObjC2Runtime.m; sourceTree = "<group>"; };
 		01DE424115FA3ACC0051C538 /* GTMStackTrace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMStackTrace.h; sourceTree = "<group>"; };
 		01DE424215FA3ACC0051C538 /* GTMStackTrace.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTMStackTrace.m; sourceTree = "<group>"; };
-		01DE424415FA3ACC0051C538 /* iConsole.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iConsole.h; sourceTree = "<group>"; };
-		01DE424515FA3ACC0051C538 /* iConsole.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iConsole.m; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D3623240D0F684500981E51 /* HelloWorldAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HelloWorldAppDelegate.h; sourceTree = "<group>"; };
 		1D3623250D0F684500981E51 /* HelloWorldAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HelloWorldAppDelegate.m; sourceTree = "<group>"; };
@@ -63,6 +65,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0192456F160F3098005A22BB /* iConsole */ = {
+			isa = PBXGroup;
+			children = (
+				01924570160F3098005A22BB /* iConsole.h */,
+				01924571160F3098005A22BB /* iConsole.m */,
+			);
+			name = iConsole;
+			path = ../../iConsole;
+			sourceTree = "<group>";
+		};
 		01DE423D15FA3ACC0051C538 /* GTM */ = {
 			isa = PBXGroup;
 			children = (
@@ -73,15 +85,6 @@
 				01DE424215FA3ACC0051C538 /* GTMStackTrace.m */,
 			);
 			path = GTM;
-			sourceTree = "<group>";
-		};
-		01DE424315FA3ACC0051C538 /* iConsole */ = {
-			isa = PBXGroup;
-			children = (
-				01DE424415FA3ACC0051C538 /* iConsole.h */,
-				01DE424515FA3ACC0051C538 /* iConsole.m */,
-			);
-			path = iConsole;
 			sourceTree = "<group>";
 		};
 		080E96DDFE201D6D7F000001 /* Classes */ = {
@@ -106,8 +109,8 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				0192456F160F3098005A22BB /* iConsole */,
 				01DE423D15FA3ACC0051C538 /* GTM */,
-				01DE424315FA3ACC0051C538 /* iConsole */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
@@ -120,6 +123,7 @@
 		29B97315FDCFA39411CA2CEA /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
+				01924573160F30A5005A22BB /* Default-568h@2x.png */,
 				32CA4F630368D1EE00C91783 /* HelloWorld_Prefix.pch */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
 			);
@@ -206,6 +210,7 @@
 				01D60A6E12C1612D007E5123 /* Icon-72.png in Resources */,
 				01D60A6F12C1612D007E5123 /* Icon.png in Resources */,
 				01D60A7012C1612D007E5123 /* Icon@2x.png in Resources */,
+				01924574160F30A5005A22BB /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -221,7 +226,7 @@
 				28D7ACF80DDB3853001CB0EB /* HelloWorldViewController.m in Sources */,
 				01DE424815FA3ACC0051C538 /* GTMObjC2Runtime.m in Sources */,
 				01DE424915FA3ACC0051C538 /* GTMStackTrace.m in Sources */,
-				01DE424A15FA3ACC0051C538 /* iConsole.m in Sources */,
+				01924572160F3098005A22BB /* iConsole.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

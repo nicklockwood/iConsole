@@ -1,9 +1,34 @@
 //
 //  iConsole.m
-//  iConsole
+//
+//  Version 1.3
 //
 //  Created by Nick Lockwood on 20/12/2010.
-//  Copyright 2010 Charcoal Design. All rights reserved.
+//  Copyright 2010 Charcoal Design
+//
+//  Distributed under the permissive zlib License
+//  Get the latest version from either of these locations:
+//
+//  http://charcoaldesign.co.uk/source/cocoa#iconsole
+//  https://github.com/nicklockwood/iConsole
+//
+//  This software is provided 'as-is', without any express or implied
+//  warranty.  In no event will the authors be held liable for any damages
+//  arising from the use of this software.
+//
+//  Permission is granted to anyone to use this software for any purpose,
+//  including commercial applications, and to alter it and redistribute it
+//  freely, subject to the following restrictions:
+//
+//  1. The origin of this software must not be misrepresented; you must not
+//  claim that you wrote the original software. If you use this software
+//  in a product, an acknowledgment in the product documentation would be
+//  appreciated but is not required.
+//
+//  2. Altered source versions must be plainly marked as such, and must not be
+//  misrepresented as being the original software.
+//
+//  3. This notice may not be removed or altered from any source distribution.
 //
 
 #import "iConsole.h"
@@ -19,15 +44,12 @@
 #define INFOBUTTON_WIDTH 20
 
 
-static iConsole *sharedConsole = nil;
+@interface iConsole() <UITextFieldDelegate, UIActionSheetDelegate>
 
-
-@interface iConsole()
-
-@property (nonatomic, retain) UITextView *consoleView;
-@property (nonatomic, retain) UITextField *inputField;
-@property (nonatomic, retain) UIButton *infoButton;
-@property (nonatomic, retain) NSMutableArray *log;
+@property (nonatomic, strong) UITextView *consoleView;
+@property (nonatomic, strong) UITextField *inputField;
+@property (nonatomic, strong) UIButton *infoButton;
+@property (nonatomic, strong) NSMutableArray *log;
 @property (nonatomic, assign) BOOL animating;
 
 @end
@@ -60,7 +82,7 @@ void exceptionHandler(NSException *exception)
 	 
 #endif
 	
-	[iConsole crash:@"Stack: (\n%@\n)", trace];
+	[iConsole crash:@"%@\n\nStack: (\n%@\n)", exception, trace];
 
 #if SAVE_LOG_TO_DISK
 	
@@ -135,7 +157,11 @@ void exceptionHandler(NSException *exception)
 - (CGAffineTransform)viewTransform
 {
 	CGFloat angle = 0;
-	switch ([UIApplication sharedApplication].statusBarOrientation) {
+	switch ([UIApplication sharedApplication].statusBarOrientation)
+    {
+        case UIInterfaceOrientationPortrait:
+            angle = 0;
+            break;
 		case UIInterfaceOrientationPortraitUpsideDown:
 			angle = M_PI;
 			break;
@@ -384,21 +410,25 @@ void exceptionHandler(NSException *exception)
 
 + (iConsole *)sharedConsole
 {
-
+    @synchronized(self)
+    {
+    
 #if defined CONSOLE_ENABLED && CONSOLE_ENABLED
 	
-	if (sharedConsole == nil)
-	{
-		sharedConsole = [[self alloc] init];
-	}
-	return sharedConsole;
+        static iConsole *sharedConsole = nil;
+        if (sharedConsole == nil)
+        {
+            sharedConsole = [[self alloc] init];
+        }
+        return sharedConsole;
 	
 #else
 	
-	return nil
+        return nil
 	
 #endif
-	
+        
+    }
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -498,16 +528,19 @@ void exceptionHandler(NSException *exception)
 												   object:nil];
 	}
 
-	[sharedConsole.consoleView scrollRangeToVisible:NSMakeRange(sharedConsole.consoleView.text.length, 0)];
+	[self.consoleView scrollRangeToVisible:NSMakeRange(self.consoleView.text.length, 0)];
 }
 
 - (void)viewDidUnload
 {
-	[[NSNotificationCenter defaultCenter] removeObserver:self];
+	[[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
 	
 	self.consoleView = nil;
 	self.inputField = nil;
 	self.infoButton = nil;
+    
+    [super viewDidUnload];
 }
 
 - (void)dealloc
@@ -518,7 +551,8 @@ void exceptionHandler(NSException *exception)
 	[inputField release];
 	[infoButton release];
 	[log release];
-	[super dealloc];
+    
+	[super ah_dealloc];
 }
 
 
@@ -534,11 +568,11 @@ void exceptionHandler(NSException *exception)
 	
 	if ([NSThread currentThread] == [NSThread mainThread])
 	{	
-		[sharedConsole logOnMainThread:message];
+		[[self sharedConsole] logOnMainThread:message];
 	}
 	else
 	{
-		[sharedConsole performSelectorOnMainThread:@selector(logOnMainThread:) withObject:message waitUntilDone:NO];
+		[[self sharedConsole] performSelectorOnMainThread:@selector(logOnMainThread:) withObject:message waitUntilDone:NO];
 	}
 	
 #endif
@@ -629,5 +663,129 @@ void exceptionHandler(NSException *exception)
 {
 	[[iConsole sharedConsole] hideConsole];
 }
+
+@end
+
+
+@implementation iConsoleWindow
+
+#if defined CONSOLE_ENABLED && CONSOLE_ENABLED
+
++ (void)initialize
+{
+	//initialise the console
+	[iConsole sharedConsole];
+}
+
+- (void)sendEvent:(UIEvent *)event
+{
+	if (event.type == UIEventTypeTouches)
+	{
+		NSSet *touches = [event allTouches];
+		if ([touches count] == (TARGET_IPHONE_SIMULATOR ? SIMULATOR_CONSOLE_TOUCHES: DEVICE_CONSOLE_TOUCHES))
+		{
+			BOOL allUp = YES;
+			BOOL allDown = YES;
+			BOOL allLeft = YES;
+			BOOL allRight = YES;
+			
+			for (UITouch *touch in touches)
+			{
+				if ([touch locationInView:self].y <= [touch previousLocationInView:self].y)
+				{
+					allDown = NO;
+				}
+				if ([touch locationInView:self].y >= [touch previousLocationInView:self].y)
+				{
+					allUp = NO;
+				}
+				if ([touch locationInView:self].x <= [touch previousLocationInView:self].x)
+				{
+					allLeft = NO;
+				}
+				if ([touch locationInView:self].x >= [touch previousLocationInView:self].x)
+				{
+					allRight = NO;
+				}
+			}
+			
+			switch ([UIApplication sharedApplication].statusBarOrientation) {
+				case UIInterfaceOrientationPortrait:
+					if (allUp)
+					{
+						[iConsole show];
+						return;
+					}
+					else if (allDown)
+					{
+						[iConsole hide];
+						return;
+					}
+					break;
+				case UIInterfaceOrientationPortraitUpsideDown:
+					if (allDown)
+					{
+						[iConsole show];
+						return;
+					}
+					else if (allUp)
+					{
+						[iConsole hide];
+						return;
+					}
+					break;
+				case UIInterfaceOrientationLandscapeLeft:
+					if (allRight)
+					{
+						[iConsole show];
+						return;
+					}
+					else if (allLeft)
+					{
+						[iConsole hide];
+						return;
+					}
+					break;
+				case UIInterfaceOrientationLandscapeRight:
+					if (allLeft)
+					{
+						[iConsole show];
+						return;
+					}
+					else if (allRight)
+					{
+						[iConsole hide];
+						return;
+					}
+					break;
+			}
+		}
+	}
+    
+	return [super sendEvent:event];
+}
+
+#	if (TARGET_IPHONE_SIMULATOR ? SIMULATOR_SHAKE_TO_SHOW_CONSOLE: DEVICE_SHAKE_TO_SHOW_CONSOLE)
+
+- (void)motionEnded:(UIEventSubtype)motion withEvent:(UIEvent *)event {
+	
+    if (event.type == UIEventTypeMotion && event.subtype == UIEventSubtypeMotionShake)
+	{
+		if ([iConsole sharedConsole].view.superview == nil)
+		{
+			[iConsole show];
+		}
+		else
+		{
+			[iConsole hide];
+		}
+    }
+	
+	[super motionEnded:motion withEvent:event];
+}
+
+#	endif
+
+#endif
 
 @end
