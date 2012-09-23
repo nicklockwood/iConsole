@@ -11,10 +11,6 @@
 
 
 @interface HelloWorldViewController : UIViewController <UITextFieldDelegate, iConsoleDelegate>
-{	
-	UILabel *label;
-	UITextField *field;
-}
 
 @property (nonatomic, strong) IBOutlet UILabel *label;
 @property (nonatomic, strong) IBOutlet UITextField *field;

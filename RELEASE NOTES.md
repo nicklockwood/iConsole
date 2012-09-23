@@ -1,3 +1,9 @@
+Version 1.4
+
+- iConsole now uses properties for configuration instead of macros
+- Updated GTMlibrary to latest version, which fixes analyzer warnings
+- Console action button now uses more intuitive icon
+
 Version 1.3
 
 - Updated project structure

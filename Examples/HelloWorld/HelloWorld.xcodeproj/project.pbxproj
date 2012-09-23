@@ -123,7 +123,6 @@
 		29B97315FDCFA39411CA2CEA /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
-				01924573160F30A5005A22BB /* Default-568h@2x.png */,
 				32CA4F630368D1EE00C91783 /* HelloWorld_Prefix.pch */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
 			);
@@ -133,6 +132,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				01924573160F30A5005A22BB /* Default-568h@2x.png */,
 				01D60A6B12C1612D007E5123 /* Icon-72.png */,
 				01D60A6C12C1612D007E5123 /* Icon.png */,
 				01D60A6D12C1612D007E5123 /* Icon@2x.png */,
@@ -245,6 +245,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = HelloWorld_Prefix.pch;
 				INFOPLIST_FILE = "HelloWorld-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				PRODUCT_NAME = iConsole;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -261,6 +262,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = HelloWorld_Prefix.pch;
 				INFOPLIST_FILE = "HelloWorld-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				PRODUCT_NAME = iConsole;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";

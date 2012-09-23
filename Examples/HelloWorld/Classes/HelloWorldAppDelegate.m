@@ -15,15 +15,10 @@
 @synthesize viewController;
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application
-{        
+{
+    [window setFrame:[[UIScreen mainScreen] bounds]];
 	[window addSubview:viewController.view];
     [window makeKeyAndVisible];
-}
-
-- (void)dealloc
-{
-    [viewController release];
-    [window release];
 }
 
 @end

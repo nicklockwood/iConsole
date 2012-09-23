@@ -9,8 +9,8 @@ iConsole also serves another purpose: Using the command interface it provides an
 Supported OS & SDK Versions
 -----------------------------
 
-* Supported build target - iOS 5.1 (Xcode 4.4.1, Apple LLVM compiler 4.0)
-* Earliest supported deployment target - iOS 4.3
+* Supported build target - iOS 6.0 (Xcode 4.5, Apple LLVM compiler 4.1)
+* Earliest supported deployment target - iOS 5.0
 * Earliest compatible deployment target - iOS 3.0
 
 NOTE: 'Supported' means that the library has been tested with this version. 'Compatible' means that the library should work on this OS version (i.e. it doesn't rely on any unavailable SDK features) but is no longer being tested for compatibility and may require tweaking or bug fixes to run correctly.
@@ -74,48 +74,71 @@ As well as displaying logs, the console can also allow user command input. This 
 For an example of how to implement this, look at the HelloWorld app.
 
 
+Exception Handling
+------------------
+
+By default, iConsole intercepts unhandled exceptions (crashes) and deciphers the stack trace using the GTM library. You may wish to disable this feature if your app already implements a crash handler, or if you do not want to include GTM as a dependency. To do that, set one or both of these macros to 0:
+
+    ICONSOLE_ADD_EXCEPTION_HANDLER
+    ICONSOLE_USE_GOOGLE_STACK_TRACE
+    
+The GTM trace function provides a much more useful stack trace than the default iPhone SDK provides. It is recommended to enable this if you are using the `ICONSOLE_ADD_EXCEPTION_HANDLER` option. If the `ICONSOLE_USE_GOOGLE_STACK_TRACE` option is disabled, you can safely remove the GTM source files from the project.
+
+**Note:** if the `ICONSOLE_ADD_EXCEPTION_HANDLER` option is disabled, you should call `[[NSUserDefaults standardDefaults] synchronize]` in your own crash handler to ensure that logs are preserved in the event of a crash.
+    
+
 Configuration
 --------------
 
-To configure iConsole, there are a number of constants in the iConsole.h file that can alter its behaviour and appearance. These should be mostly self-explanatory, but key ones are documented below:
+To configure iConsole, there are a number of properties of the iConsole class that can alter the behaviour and appearance of iConsole. These should be mostly self-explanatory, but they are documented below:
 
-    CONSOLE_ENABLED
+    @property (nonatomic, assign) BOOL enabled;
     
 Set this to 0 to disable the console. It is a good idea to set this using a compiler macro in your project target settings so it can be switched off in your release build.
 
-    LOG_LEVEL
+    @property (nonatomic, assign) iConsoleLogLevel logLevel;
     
-Depending on your use of logging in the project, the log may fill up quickly. Use the log level to selectively disable logs based on severity. You can use the `LOG_LEVEL_XXX` constants for this. `LOG_LEVEL_NONE` will disable all logging. `LOG_LEVEL_INFO` will enable all logging levels.
+Depending on your use of logging in the project, the log may fill up quickly. Use the log level to selectively disable logs based on severity. You can use the `iConsoleLogLevel` constants for this. `iConsoleLogLevelNone` will disable all logging. `iConsoleLogLevelInfo` will enable all logging levels.
 
-    ADD_CRASH_HANDLER
+    @property (nonatomic, assign) BOOL saveLogToDisk;
     
-If enabled this will automatically log a stack trace to the console in event of a fatal exception.
+If this option is disabled, logs will not be saved between sessions. Note that the `ICONSOLE_ADD_EXCEPTION_HANDLER` feature is useless if this option is not enabled.
 
-    USE_GOOGLE_STACK_TRACE
+    @property (nonatomic, assign) NSUInteger maxLogItems;
     
-The GTM trace function provides a much more useful stack trace than the default iPhone SDK provides. It is recommended to enable this if you are using the `ADD_CRASH_HANDLER` feature. If this option is disabled however, you can safely remove the GTM source files from the project.
+Appending additional lines to the log has a small performance cost. The larger the log gets, the greater this performance impact. For this reason, the maximum size of the log is limited to 1000 lines. You can increase or decrease this limit by settings this property.
 
-    SAVE_LOG_TO_DISK
+    @property (nonatomic, weak) id<iConsoleDelegate> delegate;
     
-If this option is disabled, logs will not be saved between sessions. Note that the `ADD_CRASH_HANDLER` feature is useless if this is not set.
+This property is used to set the delegate for implementing the console command interface.
 
-    DEVICE/SIMULATOR_CONSOLE_TOUCHES
+    @property (nonatomic, assign) NSUInteger simulatorTouchesToShow;
+    @property (nonatomic, assign) NSUInteger deviceTouchesToShow;
     
-The number of fingers needed for the consoleactivation swipe. More than three is difficult to pull off on an iPhone unless you have very small fingers. More than two is impossible to execute in the simulator. If your app makes use of two or three fingered swipes for other interactions you may wish to increase this however. If you do not wish to allow swipe activation of the console, set the touches count to 0 or some in-feasibly large number.
+The number of fingers needed for the consoleactivation swipe. More than three is difficult to pull off on an iPhone unless you have very small fingers. More than two is impossible to execute in the simulator. If your app makes use of two or three fingered swipes for other interactions you may wish to increase this however. If you do not wish to allow swipe activation of the console, set the touches count to 0 or some infeasibly large number. The default is 2 fingers on the simulator and 3 on the device.
 
-    DEVICE/SIMULATOR_SHAKE_TO_SHOW_CONSOLE
+    @property (nonatomic, assign) BOOL simulatorShakeToShow;
+    @property (nonatomic, assign) BOOL deviceShakeToShow;
     
-If swiping is not an appropriate activation method in your app, you can optionally enable shake-to-show instead. This is certainly a less fiddly option in the simulator.
+If swiping is not an appropriate activation method in your app, you can optionally enable shake-to-show instead. This is certainly a less fiddly option in the simulator, but may already be used for another purpose in your app. By default, this feature is enabled on the simulator and disabled on the device.
 
-    CONSOLE_BRANDING
+    @property (nonatomic, copy) NSString *infoString;
     
 The text that appears at the top of the console. This contains the Charcoal Design copyright by default, but you are permitted to
-remove the iConsole name and change this to reflect your own company branding, as long as you do not add your own copyright, or otherwise imply that the iConsole is your own work.
+remove the iConsole name and change this to reflect your own company branding, as long as you do not add your own copyright, or otherwise imply that iConsole is your own work.
 
-    CONSOLE_INPUT_PLACEHOLDER
+    @property (nonatomic, copy) NSString *inputPlaceholderString;
     
 Helper text that appears in the console input field.
 
-    LOG_SUBMIT_EMAIL
+    @property (nonatomic, copy) NSString *logSubmissionEmail;
     
-The default "to" address when sending console logs via email from within the app.
+The default "to" address when sending console logs via email from within the app (blank by default).
+
+    @property (nonatomic, strong) UIColor *backgroundColor;
+    
+The background color for the console (black by default).
+    
+    @property (nonatomic, strong) UIColor *textColor;
+    
+The color of the console text and action button icon (white by default).

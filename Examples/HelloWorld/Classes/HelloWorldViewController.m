@@ -12,18 +12,16 @@
 
 @implementation HelloWorldViewController
 
-@synthesize label, field, swipeLabel;
-
 - (IBAction)sayHello:(id)sender
 {	
-	NSString *text = field.text;
+	NSString *text = _field.text;
 	if ([text isEqualToString:@""])
 	{
 		text = @"World";
 	}
 	
-	label.text = [NSString stringWithFormat:@"Hello %@", text];
-	[iConsole info:@"Said '%@'", label.text];
+	_label.text = [NSString stringWithFormat:@"Hello %@", text];
+	[iConsole info:@"Said '%@'", _label.text];
 }
 
 - (IBAction)crash:(id)sender
@@ -35,14 +33,14 @@
 {
     [iConsole sharedConsole].delegate = self;
 	
-	int touches = (TARGET_IPHONE_SIMULATOR ? SIMULATOR_CONSOLE_TOUCHES: DEVICE_CONSOLE_TOUCHES);
+	int touches = (TARGET_IPHONE_SIMULATOR ? [iConsole sharedConsole].simulatorTouchesToShow: [iConsole sharedConsole].deviceTouchesToShow);
 	if (touches > 0 && touches < 11)
 	{
 		self.swipeLabel.text = [NSString stringWithFormat:
 								@"\nSwipe up with %i finger%@ to show the console",
 								touches, (touches != 1)? @"s": @""];
 	}
-	else if (TARGET_IPHONE_SIMULATOR ? SIMULATOR_SHAKE_TO_SHOW_CONSOLE: DEVICE_SHAKE_TO_SHOW_CONSOLE)
+	else if (TARGET_IPHONE_SIMULATOR ? [iConsole sharedConsole].simulatorShakeToShow: [iConsole sharedConsole].deviceShakeToShow)
 	{
 		self.swipeLabel.text = @"\nShake device to show the console";
 	}
@@ -66,7 +64,7 @@
 	if ([command isEqualToString:@"version"])
 	{
 		[iConsole info:@"%@ version %@",
-		 [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"],
+         [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"],
 		 [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]];
 	}
 	else 
@@ -80,13 +78,6 @@
 	self.label = nil;
 	self.field = nil;
 	self.swipeLabel = nil;
-}
-
-- (void)dealloc
-{
-	[label release];
-	[field release];
-	[swipeLabel release];
 }
 
 @end
