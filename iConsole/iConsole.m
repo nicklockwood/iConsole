@@ -350,7 +350,7 @@ void exceptionHandler(NSException *exception)
 
 - (void)logOnMainThread:(NSString *)message
 {
-	[_log insertObject:[@"> " stringByAppendingString:message] atIndex:[_log count] - 1];
+	[_log addObject:[@"> " stringByAppendingString:message]];
 	if ([_log count] > _maxLogItems)
 	{
 		[_log removeObjectAtIndex:0];
