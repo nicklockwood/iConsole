@@ -1,3 +1,7 @@
+Version 1.4.1
+
+- Fixed crash when inserting first log
+
 Version 1.4
 
 - iConsole now uses properties for configuration instead of macros

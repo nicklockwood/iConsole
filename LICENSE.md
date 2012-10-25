@@ -1,6 +1,6 @@
 iConsole
 
-version 1.4, September 23rd, 2012
+version 1.4.1, October 26th, 2012
 Copyright (C) 2010 Charcoal Design
 
 This software is provided 'as-is', without any express or implied
