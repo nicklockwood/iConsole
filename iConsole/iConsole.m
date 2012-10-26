@@ -1,7 +1,7 @@
 //
 //  iConsole.m
 //
-//  Version 1.4.1
+//  Version 1.4
 //
 //  Created by Nick Lockwood on 20/12/2010.
 //  Copyright 2010 Charcoal Design
@@ -110,7 +110,7 @@ void exceptionHandler(NSException *exception)
 		text = [text stringByAppendingString:@"\nShake device to hide console"];
 	}
 	text = [text stringByAppendingString:@"\n--------------------------------------\n"];
-	text = [text stringByAppendingString:[_log componentsJoinedByString:@"\n"]];
+	text = [text stringByAppendingString:[[_log arrayByAddingObject:@">"] componentsJoinedByString:@"\n"]];
 	_consoleView.text = text;
 	
 	[_consoleView scrollRangeToVisible:NSMakeRange(_consoleView.text.length, 0)];
@@ -118,7 +118,7 @@ void exceptionHandler(NSException *exception)
 
 - (void)resetLog
 {
-	self.log = [NSMutableArray arrayWithObjects:@"> ", nil];
+	self.log = [NSMutableArray array];
 	[self setConsoleText];
 }
 
@@ -453,8 +453,6 @@ void exceptionHandler(NSException *exception)
         self.backgroundColor = [UIColor blackColor];
         self.textColor = [UIColor whiteColor];
         
-		[self resetLog];
-		
         [[NSUserDefaults standardUserDefaults] synchronize];
         self.log = [NSMutableArray arrayWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:@"iConsoleLog"]];
         
