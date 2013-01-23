@@ -225,6 +225,7 @@ void exceptionHandler(NSException *exception)
 		[UIView setAnimationDelegate:self];
 		[UIView setAnimationDidStopSelector:@selector(consoleShown)];
 		[iConsole sharedConsole].view.frame = [self onscreenFrame];
+        [iConsole sharedConsole].view.transform = [self viewTransform];
 		[UIView commitAnimations];
 	}
 }
