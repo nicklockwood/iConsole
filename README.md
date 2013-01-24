@@ -19,7 +19,9 @@ NOTE: 'Supported' means that the library has been tested with this version. 'Com
 ARC Compatibility
 ------------------
 
-iConsole automatically works with both ARC and non-ARC projects through conditional compilation. There is no need to exclude iConsole files from the ARC validation process, or to convert iConsole using the ARC conversion tool.
+As of version 1.5, iConsole requires ARC. If you wish to use iConsole in a non-ARC project, just add the -fobjc-arc compiler flag to the iConsole.m class file. To do this, go to the Build Phases tab in your target settings, open the Compile Sources group, double-click iConsole.m in the list and type -fobjc-arc into the popover.
+
+If you wish to convert your whole project to ARC, comment out the #error line in iConsole.m, then run the Edit > Refactor > Convert to Objective-C ARC... tool in Xcode and make sure all files that you wish to use ARC for (including iConsole.m) are checked.
 
 
 Installation

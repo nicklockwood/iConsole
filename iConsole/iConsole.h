@@ -1,15 +1,14 @@
 //
 //  iConsole.h
 //
-//  Version 1.4.1
+//  Version 1.5
 //
 //  Created by Nick Lockwood on 20/12/2010.
 //  Copyright 2010 Charcoal Design
 //
 //  Distributed under the permissive zlib License
-//  Get the latest version from either of these locations:
+//  Get the latest version from here:
 //
-//  http://charcoaldesign.co.uk/source/cocoa#iconsole
 //  https://github.com/nicklockwood/iConsole
 //
 //  This software is provided 'as-is', without any express or implied
@@ -31,50 +30,16 @@
 //  3. This notice may not be removed or altered from any source distribution.
 //
 
-//
-//  ARC Helper
-//
-//  Version 2.1
-//
-//  Created by Nick Lockwood on 05/01/2012.
-//  Copyright 2012 Charcoal Design
-//
-//  Distributed under the permissive zlib license
-//  Get the latest version from here:
-//
-//  https://gist.github.com/1563325
-//
+#import <UIKit/UIKit.h>
 
-#ifndef ah_retain
-#if __has_feature(objc_arc)
-#define ah_retain self
-#define ah_dealloc self
-#define release self
-#define autorelease self
-#else
-#define ah_retain retain
-#define ah_dealloc dealloc
-#define __bridge
-#endif
-#endif
-
-//  Weak reference support
 
 #import <Availability.h>
-#if (!__has_feature(objc_arc)) || \
-(defined __IPHONE_OS_VERSION_MIN_REQUIRED && \
-__IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_5_0) || \
-(defined __MAC_OS_X_VERSION_MIN_REQUIRED && \
-__MAC_OS_X_VERSION_MIN_REQUIRED < __MAC_10_7)
-#undef weak
-#define weak unsafe_unretained
-#undef __weak
-#define __weak __unsafe_unretained
+#undef weak_delegate
+#if __has_feature(objc_arc_weak)
+#define weak_delegate weak
+#else
+#define weak_delegate unsafe_unretained
 #endif
-
-//  ARC Helper ends
-
-#import <UIKit/UIKit.h>
 
 
 #define ICONSOLE_ADD_EXCEPTION_HANDLER 1 //add automatic crash logging
@@ -107,7 +72,7 @@ iConsoleLogLevel;
 @property (nonatomic, assign) BOOL saveLogToDisk;
 @property (nonatomic, assign) NSUInteger maxLogItems;
 @property (nonatomic, assign) iConsoleLogLevel logLevel;
-@property (nonatomic, weak) id<iConsoleDelegate> delegate;
+@property (nonatomic, weak_delegate) id<iConsoleDelegate> delegate;
 
 //console activation
 

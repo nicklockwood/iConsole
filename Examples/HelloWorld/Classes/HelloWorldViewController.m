@@ -31,6 +31,8 @@
 
 - (void)viewDidLoad
 {
+    [super viewDidLoad];
+    
     [iConsole sharedConsole].delegate = self;
 	
 	int touches = (TARGET_IPHONE_SIMULATOR ? [iConsole sharedConsole].simulatorTouchesToShow: [iConsole sharedConsole].deviceTouchesToShow);
@@ -45,6 +47,16 @@
 		self.swipeLabel.text = @"\nShake device to show the console";
 	}
 							
+}
+
+- (BOOL)shouldAutorotate
+{
+    return YES;
+}
+
+- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation
+{
+    return UIInterfaceOrientationPortrait;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -75,6 +87,8 @@
 
 - (void)viewDidUnload
 {
+    [super viewDidUnload];
+    
 	self.label = nil;
 	self.field = nil;
 	self.swipeLabel = nil;

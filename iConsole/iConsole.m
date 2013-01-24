@@ -1,15 +1,14 @@
 //
 //  iConsole.m
 //
-//  Version 1.4
+//  Version 1.5
 //
 //  Created by Nick Lockwood on 20/12/2010.
 //  Copyright 2010 Charcoal Design
 //
 //  Distributed under the permissive zlib License
-//  Get the latest version from either of these locations:
+//  Get the latest version from here:
 //
-//  http://charcoaldesign.co.uk/source/cocoa#iconsole
 //  https://github.com/nicklockwood/iConsole
 //
 //  This software is provided 'as-is', without any express or implied
@@ -34,6 +33,13 @@
 #import "iConsole.h"
 #import <stdarg.h>
 #import <string.h> 
+
+
+#import <Availability.h>
+#if !__has_feature(objc_arc)
+#error This class requires automatic reference counting
+#endif
+
 
 #if ICONSOLE_USE_GOOGLE_STACK_TRACE
 #import "GTMStackTrace.h"
@@ -151,11 +157,11 @@ void exceptionHandler(NSException *exception)
 {
 	[self findAndResignFirstResponder:[self mainWindow]];
 	
-	UIActionSheet *sheet = [[[UIActionSheet alloc] initWithTitle:@""
-														delegate:self
-											   cancelButtonTitle:@"Cancel"
-										  destructiveButtonTitle:@"Clear Log"
-											   otherButtonTitles:@"Send by Email", nil] autorelease];
+	UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:@""
+                                                       delegate:self
+                                              cancelButtonTitle:@"Cancel"
+                                         destructiveButtonTitle:@"Clear Log"
+                                              otherButtonTitles:@"Send by Email", nil];
 
 	sheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
 	[sheet showInView:self.view];
@@ -399,13 +405,14 @@ void exceptionHandler(NSException *exception)
 	}
 	else if (buttonIndex != actionSheet.cancelButtonIndex)
 	{
+        NSString *URLSafeLog = CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, (__bridge CFStringRef)[_log componentsJoinedByString:@"\n"], NULL, CFSTR("!*'\"();:@&=+$,/?%#[]% "), kCFStringEncodingUTF8));
+        
         NSMutableString *URLString = [NSMutableString stringWithFormat:@"mailto:%@?subject=%@%%20Console%%20Log&body=%@",
                                       _logSubmissionEmail ?: @"",
                                       [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"],
-                                      [_log componentsJoinedByString:@"%0A"]];
+                                      URLSafeLog];
 
-        NSString *emailStr = [URLString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:emailStr]];
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:URLString]];
 	}
 }
 
@@ -558,30 +565,13 @@ void exceptionHandler(NSException *exception)
     [super viewDidUnload];
 }
 
-- (void)dealloc
-{
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-	
-    [_infoString release];
-    [_inputPlaceholderString release];
-    [_logSubmissionEmail release];
-    [_backgroundColor release];
-    [_textColor release];
-	[_consoleView release];
-	[_inputField release];
-	[_actionButton release];
-	[_log release];
-    
-	[super ah_dealloc];
-}
-
 
 #pragma mark -
 #pragma mark Public methods
 
 + (void)log:(NSString *)format arguments:(va_list)argList
 {	
-	NSString *message = [[[NSString alloc] initWithFormat:format arguments:argList] autorelease];
+	NSString *message = [[NSString alloc] initWithFormat:format arguments:argList];
 	NSLog(@"%@", message);
 	
     if ([self sharedConsole].enabled)

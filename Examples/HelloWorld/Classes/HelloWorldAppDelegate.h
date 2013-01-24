@@ -11,10 +11,6 @@
 @class HelloWorldViewController;
 
 @interface HelloWorldAppDelegate : NSObject <UIApplicationDelegate>
-{
-    UIWindow *window;
-    HelloWorldViewController *viewController;
-}
 
 @property (nonatomic, strong) IBOutlet UIWindow *window;
 @property (nonatomic, strong) IBOutlet HelloWorldViewController *viewController;

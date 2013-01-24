@@ -11,14 +11,11 @@
 
 @implementation HelloWorldAppDelegate
 
-@synthesize window;
-@synthesize viewController;
-
 - (void)applicationDidFinishLaunching:(UIApplication *)application
 {
-    [window setFrame:[[UIScreen mainScreen] bounds]];
-	[window addSubview:viewController.view];
-    [window makeKeyAndVisible];
+    _window = [[iConsoleWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+	_window.rootViewController = [[HelloWorldViewController alloc] init];
+    [_window makeKeyAndVisible];
 }
 
 @end

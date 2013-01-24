@@ -1,3 +1,10 @@
+Version 1.5
+
+- Now requires ARC (see README for details)
+- Now correctly URL-encodes log when sending via email
+- Fixed rotation issue
+- Added podspec file
+
 Version 1.4.1
 
 - Fixed crash when inserting first log
