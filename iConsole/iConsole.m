@@ -403,7 +403,8 @@ void exceptionHandler(NSException *exception)
                                       [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"],
                                       [_log componentsJoinedByString:@"%0A"]];
 
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:URLString]];
+        NSString *emailStr = [URLString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:emailStr]];
 	}
 }
 
