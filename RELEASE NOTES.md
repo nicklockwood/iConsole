@@ -1,3 +1,7 @@
+Version 1.5.1
+
+- Fixed problem when emailing log if app name contains a space
+
 Version 1.5
 
 - Now requires ARC (see README for details)

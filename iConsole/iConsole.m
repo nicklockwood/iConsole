@@ -1,7 +1,7 @@
 //
 //  iConsole.m
 //
-//  Version 1.5
+//  Version 1.5.1
 //
 //  Created by Nick Lockwood on 20/12/2010.
 //  Copyright 2010 Charcoal Design
@@ -397,6 +397,11 @@ void exceptionHandler(NSException *exception)
 #pragma mark -
 #pragma mark UIActionSheetDelegate methods
 
+- (NSString *)URLEncodedString:(NSString *)string
+{
+    return CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, (__bridge CFStringRef)string, NULL, CFSTR("!*'\"();:@&=+$,/?%#[]% "), kCFStringEncodingUTF8));
+}
+
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
 	if (buttonIndex == actionSheet.destructiveButtonIndex)
@@ -405,12 +410,10 @@ void exceptionHandler(NSException *exception)
 	}
 	else if (buttonIndex != actionSheet.cancelButtonIndex)
 	{
-        NSString *URLSafeLog = CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, (__bridge CFStringRef)[_log componentsJoinedByString:@"\n"], NULL, CFSTR("!*'\"();:@&=+$,/?%#[]% "), kCFStringEncodingUTF8));
-        
+        NSString *URLSafeName = [self URLEncodedString:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"]];
+        NSString *URLSafeLog = [self URLEncodedString:[_log componentsJoinedByString:@"\n"]];
         NSMutableString *URLString = [NSMutableString stringWithFormat:@"mailto:%@?subject=%@%%20Console%%20Log&body=%@",
-                                      _logSubmissionEmail ?: @"",
-                                      [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"],
-                                      URLSafeLog];
+                                      _logSubmissionEmail ?: @"", URLSafeName, URLSafeLog];
 
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:URLString]];
 	}

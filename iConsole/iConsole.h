@@ -1,7 +1,7 @@
 //
 //  iConsole.h
 //
-//  Version 1.5
+//  Version 1.5.1
 //
 //  Created by Nick Lockwood on 20/12/2010.
 //  Copyright 2010 Charcoal Design
