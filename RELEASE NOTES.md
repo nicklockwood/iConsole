@@ -1,3 +1,8 @@
+Version 1.5.2
+
+- Fixed problem with swipe gestures after displaying console
+- Added ability to specify scrollbar color
+
 Version 1.5.1
 
 - Fixed problem when emailing log if app name contains a space

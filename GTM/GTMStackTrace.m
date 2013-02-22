@@ -20,7 +20,7 @@
 #include <dlfcn.h>
 #include <mach-o/nlist.h>
 #include "GTMStackTrace.h"
-#include "GTMObjC2Runtime.h"
+#include <objc/runtime.h>
 
 struct GTMClassDescription {
   const char *class_name;
@@ -37,7 +37,7 @@ static struct GTMClassDescription *GTMClassDescriptions(NSUInteger *total_count)
   struct GTMClassDescription *class_descs 
     = calloc(class_count, sizeof(struct GTMClassDescription));
   if (class_descs) {
-    Class *classes = calloc(class_count, sizeof(Class));
+    Class *classes = (Class *)calloc(class_count, sizeof(Class));
     if (classes) {
       objc_getClassList(classes, class_count);
       for (int i = 0; i < class_count; ++i) {
@@ -45,7 +45,7 @@ static struct GTMClassDescription *GTMClassDescriptions(NSUInteger *total_count)
           = class_copyMethodList(object_getClass(classes[i]), 
                                  &class_descs[i].class_method_count);
         class_descs[i].instance_methods 
-          = class_copyMethodList(classes[i], 
+          = class_copyMethodList(classes[i],
                                  &class_descs[i].instance_method_count);
         class_descs[i].class_name = class_getName(classes[i]);
       }
@@ -53,6 +53,7 @@ static struct GTMClassDescription *GTMClassDescriptions(NSUInteger *total_count)
     } else {
       // COV_NF_START - Don't know how to force this in a unittest
       free(class_descs);
+      class_descs = NULL;
       class_count = 0;
       // COV_NF_END
     }
@@ -89,6 +90,9 @@ static NSUInteger GTMGetStackAddressDescriptorsForAddresses(void *pcs[],
   // obj methods.
   struct GTMClassDescription *class_descs 
     = GTMClassDescriptions(&class_desc_count);
+  if (class_descs == NULL) {
+    class_desc_count = 0;
+  }
   
   // Iterate through the stack.
   for (NSUInteger i = 0; i < count; ++i) {
@@ -102,8 +106,8 @@ static NSUInteger GTMGetStackAddressDescriptorsForAddresses(void *pcs[],
     for (NSUInteger j = 0; j < class_desc_count; ++j) {
       // First check the class methods.
       for (NSUInteger k = 0; k < class_descs[j].class_method_count; ++k) {
-        IMP imp = method_getImplementation(class_descs[j].class_methods[k]);
-        if (imp <= (IMP)currDesc->address) {
+        void *imp = (void *)method_getImplementation(class_descs[j].class_methods[k]);
+        if (imp <= currDesc->address) {
           size_t diff = (size_t)currDesc->address - (size_t)imp;
           if (diff < smallest_diff) {
             best_method = class_descs[j].class_methods[k];
@@ -115,8 +119,8 @@ static NSUInteger GTMGetStackAddressDescriptorsForAddresses(void *pcs[],
       }
       // Then check the instance methods.
       for (NSUInteger k = 0; k < class_descs[j].instance_method_count; ++k) {
-        IMP imp = method_getImplementation(class_descs[j].instance_methods[k]);
-        if (imp <= (IMP)currDesc->address) {
+        void *imp = (void *)method_getImplementation(class_descs[j].instance_methods[k]);
+        if (imp <= currDesc->address) {
           size_t diff = (size_t)currDesc->address - (size_t)imp;
           if (diff < smallest_diff) {
             best_method = class_descs[j].instance_methods[k];
@@ -172,24 +176,24 @@ static NSString *GTMStackTraceFromAddressDescriptors(struct GTMAddressDescriptor
       fileName = @"??";
     }
     if (descs[i].class_name) {
-      [trace appendFormat:@"#%-2u %-35s %0*p %s[%s %s]",
-       i,
+      [trace appendFormat:@"#%-2lu %-35s %0*lX %s[%s %s]",
+       (unsigned long)i,
        [fileName UTF8String],
        // sizeof(void*) * 2 is the length of the hex address (32 vs 64) and + 2 
        // for the 0x prefix
-       sizeof(void *) * 2 + 2, 
-       descs[i].address, 
+       (int)(sizeof(void *) * 2 + 2),
+       (unsigned long)descs[i].address, 
        (descs[i].is_class_method ? "+" : "-"),
        descs[i].class_name,
        (descs[i].symbol ? descs[i].symbol : "??")];
     } else {
-      [trace appendFormat:@"#%-2u %-35s %0*p %s()",
-       i, 
+      [trace appendFormat:@"#%-2lu %-35s %0*lX %s()",
+       (unsigned long)i,
        [fileName UTF8String],
        // sizeof(void*) * 2 is the length of the hex address (32 vs 64) and + 2 
        // for the 0x prefix
-       sizeof(void *) * 2 + 2,
-       descs[i].address,
+       (int)(sizeof(void *) * 2 + 2),
+       (unsigned long)descs[i].address,
        (descs[i].symbol ? descs[i].symbol : "??")];
     }
   }
@@ -345,7 +349,7 @@ NSString *GTMStackTrace(void) {
   return result;
 }
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5 || __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_2_0
 
 NSString *GTMStackTraceFromException(NSException *e) {
   NSString *trace = @"";

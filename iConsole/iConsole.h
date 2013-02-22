@@ -1,7 +1,7 @@
 //
 //  iConsole.h
 //
-//  Version 1.5.1
+//  Version 1.5.2
 //
 //  Created by Nick Lockwood on 20/12/2010.
 //  Copyright 2010 Charcoal Design
@@ -91,6 +91,7 @@ iConsoleLogLevel;
 
 @property (nonatomic, strong) UIColor *backgroundColor;
 @property (nonatomic, strong) UIColor *textColor;
+@property (nonatomic, assign) UIScrollViewIndicatorStyle indicatorStyle;
 
 //methods
 

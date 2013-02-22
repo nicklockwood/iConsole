@@ -1,7 +1,7 @@
 //
 //  iConsole.m
 //
-//  Version 1.5.1
+//  Version 1.5.2
 //
 //  Created by Nick Lockwood on 20/12/2010.
 //  Copyright 2010 Charcoal Design
@@ -60,6 +60,8 @@
 
 - (void)saveSettings;
 
+void exceptionHandler(NSException *exception);
+
 @end
 
 
@@ -73,6 +75,7 @@ void exceptionHandler(NSException *exception)
 	
 #if ICONSOLE_USE_GOOGLE_STACK_TRACE
 	
+    extern NSString *GTMStackTraceFromException(NSException *e);
     [iConsole crash:@"%@\n\nStack trace:\n%@)", exception, GTMStackTraceFromException(exception)];
 	
 #else
@@ -464,6 +467,7 @@ void exceptionHandler(NSException *exception)
         
         self.backgroundColor = [UIColor blackColor];
         self.textColor = [UIColor whiteColor];
+        self.indicatorStyle = UIScrollViewIndicatorStyleWhite;
         
         [[NSUserDefaults standardUserDefaults] synchronize];
         self.log = [NSMutableArray arrayWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:@"iConsoleLog"]];
@@ -504,6 +508,7 @@ void exceptionHandler(NSException *exception)
 	_consoleView.font = [UIFont fontWithName:@"Courier" size:12];
 	_consoleView.textColor = _textColor;
 	_consoleView.backgroundColor = [UIColor clearColor];
+    _consoleView.indicatorStyle = _indicatorStyle;
 	_consoleView.editable = NO;
 	_consoleView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
 	[self setConsoleText];
@@ -574,11 +579,11 @@ void exceptionHandler(NSException *exception)
 
 + (void)log:(NSString *)format arguments:(va_list)argList
 {	
-	NSString *message = [[NSString alloc] initWithFormat:format arguments:argList];
-	NSLog(@"%@", message);
+	NSLogv(format, argList);
 	
     if ([self sharedConsole].enabled)
     {
+        NSString *message = [[NSString alloc] initWithFormat:format arguments:argList];
         if ([NSThread currentThread] == [NSThread mainThread])
         {	
             [[self sharedConsole] logOnMainThread:message];
@@ -705,12 +710,10 @@ void exceptionHandler(NSException *exception)
 					if (allUp)
 					{
 						[iConsole show];
-						return;
 					}
 					else if (allDown)
 					{
 						[iConsole hide];
-						return;
 					}
 					break;
                 }
@@ -719,12 +722,10 @@ void exceptionHandler(NSException *exception)
 					if (allDown)
 					{
 						[iConsole show];
-						return;
 					}
 					else if (allUp)
 					{
 						[iConsole hide];
-						return;
 					}
 					break;
                 }
@@ -733,12 +734,10 @@ void exceptionHandler(NSException *exception)
 					if (allRight)
 					{
 						[iConsole show];
-						return;
 					}
 					else if (allLeft)
 					{
 						[iConsole hide];
-						return;
 					}
 					break;
                 }
@@ -747,12 +746,10 @@ void exceptionHandler(NSException *exception)
 					if (allLeft)
 					{
 						[iConsole show];
-						return;
 					}
 					else if (allRight)
 					{
 						[iConsole hide];
-						return;
 					}
 					break;
                 }
