@@ -579,7 +579,7 @@ void exceptionHandler(NSException *exception)
 
 + (void)log:(NSString *)format arguments:(va_list)argList
 {   
-    if (self.disableNSLog == NO)
+    if ([self sharedConsole].disableNSLog == NO)
     {
         NSLogv(format, argList);
     }
