@@ -73,6 +73,7 @@ iConsoleLogLevel;
 @property (nonatomic, assign) NSUInteger maxLogItems;
 @property (nonatomic, assign) iConsoleLogLevel logLevel;
 @property (nonatomic, weak_delegate) id<iConsoleDelegate> delegate;
+@property (nonatomic, assign) BOOL disableNSLog;
 
 //console activation
 
