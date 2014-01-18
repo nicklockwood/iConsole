@@ -46,7 +46,7 @@
 	{
 		self.swipeLabel.text = @"\nShake device to show the console";
 	}
-							
+    
 }
 
 - (BOOL)shouldAutorotate

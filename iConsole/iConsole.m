@@ -57,6 +57,8 @@
 @property (nonatomic, strong) UIButton *actionButton;
 @property (nonatomic, strong) NSMutableArray *log;
 @property (nonatomic, assign) BOOL animating;
+@property (nonatomic, strong) NSDateFormatter *logDateFormatter;
+@property (nonatomic, strong) NSDateFormatter *fileDateFormatter;
 
 - (void)saveSettings;
 
@@ -128,6 +130,7 @@ void exceptionHandler(NSException *exception)
 - (void)resetLog
 {
 	self.log = [NSMutableArray array];
+    [[NSUserDefaults standardUserDefaults] setObject:_log forKey:@"iConsoleLog"];
 	[self setConsoleText];
 }
 
@@ -230,7 +233,7 @@ void exceptionHandler(NSException *exception)
 		
 		_animating = YES;
 		[UIView beginAnimations:nil context:nil];
-		[UIView setAnimationDuration:0.4];
+		[UIView setAnimationDuration:0.4f];
 		[UIView setAnimationDelegate:self];
 		[UIView setAnimationDidStopSelector:@selector(consoleShown)];
 		[iConsole sharedConsole].view.frame = [self onscreenFrame];
@@ -253,7 +256,7 @@ void exceptionHandler(NSException *exception)
 		
 		_animating = YES;
 		[UIView beginAnimations:nil context:nil];
-		[UIView setAnimationDuration:0.4];
+		[UIView setAnimationDuration:0.4f];
 		[UIView setAnimationDelegate:self];
 		[UIView setAnimationDidStopSelector:@selector(consoleHidden)];
 		[iConsole sharedConsole].view.frame = [self offscreenFrame];
@@ -304,7 +307,7 @@ void exceptionHandler(NSException *exception)
 	}
 	[UIView beginAnimations:nil context:nil];
 	[UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
-	[UIView setAnimationDuration:0.35];
+	[UIView setAnimationDuration:0.35f];
 	self.view.frame = bounds;
 	[UIView commitAnimations];
 }
@@ -360,7 +363,7 @@ void exceptionHandler(NSException *exception)
 
 - (void)logOnMainThread:(NSString *)message
 {
-	[_log addObject:[@"> " stringByAppendingString:message]];
+	[_log addObject:[NSString stringWithFormat:@"> %@ %@", [_logDateFormatter stringFromDate:[NSDate date]], message]];
 	if ([_log count] > _maxLogItems)
 	{
 		[_log removeObjectAtIndex:0];
@@ -461,15 +464,18 @@ void exceptionHandler(NSException *exception)
         _simulatorShakeToShow = YES;
         _deviceShakeToShow = NO;
         
-        self.infoString = @"iConsole: Copyright © 2010 Charcoal Design";
+        self.infoString = @"iConsole";
         self.inputPlaceholderString = @"Enter command...";
         self.logSubmissionEmail = nil;
         
         self.backgroundColor = [UIColor blackColor];
         self.textColor = [UIColor whiteColor];
         self.indicatorStyle = UIScrollViewIndicatorStyleWhite;
+        self.logDateFormatter = [[NSDateFormatter alloc] init];
+        [self.logDateFormatter setDateFormat:@"dd/MM/yy HH:mm"];
+        self.fileDateFormatter = [[NSDateFormatter alloc] init];
+        [self.fileDateFormatter setDateFormat:@"dd_MM_yy"];
         
-        [[NSUserDefaults standardUserDefaults] synchronize];
         self.log = [NSMutableArray arrayWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:@"iConsoleLog"]];
         
         if (&UIApplicationDidEnterBackgroundNotification != NULL)
@@ -649,6 +655,30 @@ void exceptionHandler(NSException *exception)
         [self log:[@"CRASH: " stringByAppendingString:format] arguments:argList];
         va_end(argList);
     }
+}
+
++ (void)logToFile:(NSString *)fileName info:(NSString *)format, ...
+{
+    va_list argList;
+    va_start(argList, format);
+    NSString *message = [[NSString alloc] initWithFormat:format arguments:argList];
+    va_end(argList);
+    message = [message stringByAppendingString:@"\n"];
+    
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    
+    NSString *dateString = [[self sharedConsole].fileDateFormatter stringFromDate:[NSDate date]];
+    
+    NSString *filePath = [documentsDirectory stringByAppendingPathComponent:[NSString stringWithFormat:@"%@_%@.txt", fileName, dateString, nil]];
+    
+    if (![[NSFileManager defaultManager] fileExistsAtPath:filePath]) {
+        [[NSFileManager defaultManager] createFileAtPath:filePath contents:[NSData data] attributes:nil];
+    }
+    
+    NSFileHandle *fileHandler = [NSFileHandle fileHandleForWritingAtPath:filePath];
+    [fileHandler seekToEndOfFile];
+    [fileHandler writeData:[message dataUsingEncoding:NSUTF8StringEncoding]];
 }
 
 + (void)clear
