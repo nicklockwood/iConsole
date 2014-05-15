@@ -121,7 +121,7 @@ void exceptionHandler(NSException *exception)
 	text = [text stringByAppendingString:@"\n--------------------------------------\n"];
 	text = [text stringByAppendingString:[[_log arrayByAddingObject:@">"] componentsJoinedByString:@"\n"]];
 	_consoleView.text = text;
-	
+    [_consoleView scrollRangeToVisible:NSMakeRange(0, 0)];
 	[_consoleView scrollRangeToVisible:NSMakeRange(_consoleView.text.length, 0)];
 }
 
