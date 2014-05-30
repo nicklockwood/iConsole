@@ -34,7 +34,6 @@
 #import <stdarg.h>
 #import <string.h> 
 
-
 #import <Availability.h>
 #if !__has_feature(objc_arc)
 #error This class requires automatic reference counting
@@ -48,6 +47,7 @@
 
 #define EDITFIELD_HEIGHT 28
 #define ACTION_BUTTON_WIDTH 28
+#define kiConsoleLog @"iConsoleLog"
 
 
 @interface iConsole() <UITextFieldDelegate, UIActionSheetDelegate>
@@ -55,6 +55,7 @@
 @property (nonatomic, strong) UITextView *consoleView;
 @property (nonatomic, strong) UITextField *inputField;
 @property (nonatomic, strong) UIButton *actionButton;
+@property (nonatomic, strong) UIButton *pathButton;
 @property (nonatomic, strong) NSMutableArray *log;
 @property (nonatomic, assign) BOOL animating;
 
@@ -127,7 +128,9 @@ void exceptionHandler(NSException *exception)
 
 - (void)resetLog
 {
-	self.log = [NSMutableArray array];
+    [self.log removeAllObjects];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:kiConsoleLog];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 	[self setConsoleText];
 }
 
@@ -168,6 +171,11 @@ void exceptionHandler(NSException *exception)
 
 	sheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
 	[sheet showInView:self.view];
+}
+
+- (void)commond:(id)sender
+{
+    //pop up command type menu
 }
 
 - (CGAffineTransform)viewTransform
@@ -365,7 +373,7 @@ void exceptionHandler(NSException *exception)
 	{
 		[_log removeObjectAtIndex:0];
 	}
-    [[NSUserDefaults standardUserDefaults] setObject:_log forKey:@"iConsoleLog"];
+    [[NSUserDefaults standardUserDefaults] setObject:_log forKey:kiConsoleLog];
     if (self.view.superview)
     {
         [self setConsoleText];
@@ -470,7 +478,7 @@ void exceptionHandler(NSException *exception)
         self.indicatorStyle = UIScrollViewIndicatorStyleWhite;
         
         [[NSUserDefaults standardUserDefaults] synchronize];
-        self.log = [NSMutableArray arrayWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:@"iConsoleLog"]];
+        self.log = [NSMutableArray arrayWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:kiConsoleLog]];
         
         if (&UIApplicationDidEnterBackgroundNotification != NULL)
         {
@@ -528,8 +536,8 @@ void exceptionHandler(NSException *exception)
 	
 	if (_delegate)
 	{
-		_inputField = [[UITextField alloc] initWithFrame:CGRectMake(5, self.view.frame.size.height - EDITFIELD_HEIGHT - 5,
-                                                                    self.view.frame.size.width - 15 - ACTION_BUTTON_WIDTH,
+		_inputField = [[UITextField alloc] initWithFrame:CGRectMake(5 + ACTION_BUTTON_WIDTH, self.view.frame.size.height - EDITFIELD_HEIGHT - 5,
+                                                                    self.view.frame.size.width - 15 - ACTION_BUTTON_WIDTH *2,
                                                                     EDITFIELD_HEIGHT)];
 		_inputField.borderStyle = UITextBorderStyleRoundedRect;
 		_inputField.font = [UIFont fontWithName:@"Courier" size:12];
@@ -546,6 +554,18 @@ void exceptionHandler(NSException *exception)
 		frame.size.height -= EDITFIELD_HEIGHT + 10;
 		_consoleView.frame = frame;
 		[self.view addSubview:_inputField];
+        
+        self.pathButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        self.pathButton.frame = CGRectMake(2, self.view.frame.size.height - EDITFIELD_HEIGHT - 5, ACTION_BUTTON_WIDTH, ACTION_BUTTON_WIDTH);
+        [self.pathButton setTitle:@"⌘" forState:UIControlStateNormal];
+        self.pathButton.titleLabel.font = [UIFont boldSystemFontOfSize:ACTION_BUTTON_WIDTH];
+        self.pathButton.titleLabel.textAlignment = NSTextAlignmentCenter;
+        [self.pathButton setTitleColor:_textColor forState:UIControlStateNormal];
+        [self.pathButton setTitleColor:[_textColor colorWithAlphaComponent:0.5f] forState:UIControlStateHighlighted];
+        self.pathButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
+        [self.pathButton addTarget:self action:@selector(commond:) forControlEvents:UIControlEventTouchUpInside];
+        [self.view addSubview:self.pathButton];
+        
 		
 		[[NSNotificationCenter defaultCenter] addObserver:self
 												 selector:@selector(keyboardWillShow:)
