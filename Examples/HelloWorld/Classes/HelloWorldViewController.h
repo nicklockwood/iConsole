@@ -10,7 +10,7 @@
 #import "iConsole.h"
 
 
-@interface HelloWorldViewController : UIViewController <UITextFieldDelegate, iConsoleDelegate>
+@interface HelloWorldViewController : UIViewController <UITextFieldDelegate>
 
 @property (nonatomic, strong) IBOutlet UILabel *label;
 @property (nonatomic, strong) IBOutlet UITextField *field;

@@ -391,7 +391,9 @@ void exceptionHandler(NSException *exception)
 	if (![textField.text isEqualToString:@""])
 	{
 		[iConsole log:textField.text];
+        NSLog(@"iConsoleLog %@", [[NSUserDefaults standardUserDefaults] objectForKey:kiConsoleLog]);
 		[_delegate handleConsoleCommand:textField.text];
+        
 		textField.text = @"";
 	}
 }
@@ -511,6 +513,8 @@ void exceptionHandler(NSException *exception)
 
 - (void)viewDidLoad
 {
+    [iConsoleManager sharediConsoleManager];
+    
     self.view.clipsToBounds = YES;
 	self.view.backgroundColor = _backgroundColor;
 	self.view.autoresizesSubviews = YES;
@@ -536,7 +540,7 @@ void exceptionHandler(NSException *exception)
 	[_actionButton addTarget:self action:@selector(infoAction) forControlEvents:UIControlEventTouchUpInside];
 	_actionButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin;
 	[self.view addSubview:_actionButton];
-	
+    
 	if (_delegate)
 	{
 		_inputField = [[UITextField alloc] initWithFrame:CGRectMake(5 + ACTION_BUTTON_WIDTH, self.view.frame.size.height - EDITFIELD_HEIGHT - 5,
