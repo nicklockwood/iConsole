@@ -33,6 +33,7 @@
 #import "iConsole.h"
 #import <stdarg.h>
 #import <string.h> 
+#import "iConsoleManager.h"
 
 #import <Availability.h>
 #if !__has_feature(objc_arc)
@@ -173,9 +174,11 @@ void exceptionHandler(NSException *exception)
 	[sheet showInView:self.view];
 }
 
-- (void)commond:(id)sender
+- (void)command:(id)sender
 {
     //pop up command type menu
+    UIButton *button = (id)sender;
+    [[iConsoleManager sharediConsoleManager].commandMenu showInView:self.view targetRect:button.frame animated:YES];
 }
 
 - (CGAffineTransform)viewTransform
@@ -563,7 +566,7 @@ void exceptionHandler(NSException *exception)
         [self.pathButton setTitleColor:_textColor forState:UIControlStateNormal];
         [self.pathButton setTitleColor:[_textColor colorWithAlphaComponent:0.5f] forState:UIControlStateHighlighted];
         self.pathButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
-        [self.pathButton addTarget:self action:@selector(commond:) forControlEvents:UIControlEventTouchUpInside];
+        [self.pathButton addTarget:self action:@selector(command:) forControlEvents:UIControlEventTouchUpInside];
         [self.view addSubview:self.pathButton];
         
 		
