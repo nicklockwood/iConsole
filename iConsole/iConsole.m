@@ -34,6 +34,7 @@
 #import <stdarg.h>
 #import <string.h> 
 #import "iConsoleManager.h"
+#import "ICTextView.h"
 
 #import <Availability.h>
 #if !__has_feature(objc_arc)
@@ -53,7 +54,7 @@
 
 @interface iConsole() <UITextFieldDelegate, UIActionSheetDelegate>
 
-@property (nonatomic, strong) UITextView *consoleView;
+@property (nonatomic, strong) ICTextView *consoleView;
 @property (nonatomic, strong) UITextField *inputField;
 @property (nonatomic, strong) UIButton *actionButton;
 @property (nonatomic, strong) UIButton *pathButton;
@@ -184,6 +185,8 @@ void exceptionHandler(NSException *exception)
 - (CGAffineTransform)viewTransform
 {
 	CGFloat angle = 0;
+    
+    
 	switch ([UIApplication sharedApplication].statusBarOrientation)
     {
         case UIInterfaceOrientationPortrait:
@@ -198,6 +201,9 @@ void exceptionHandler(NSException *exception)
 		case UIInterfaceOrientationLandscapeRight:
 			angle = M_PI_2;
 			break;
+        case UIInterfaceOrientationUnknown:
+            angle = 0;
+            break;
 	}
 	return CGAffineTransformMakeRotation(angle);
 }
@@ -224,6 +230,9 @@ void exceptionHandler(NSException *exception)
 		case UIInterfaceOrientationLandscapeRight:
 			frame.origin.x = -frame.size.width;
 			break;
+        case UIInterfaceOrientationUnknown:
+            frame.origin.y = frame.size.height;
+            break;
 	}
 	return frame;
 }
@@ -312,6 +321,10 @@ void exceptionHandler(NSException *exception)
 		case UIInterfaceOrientationLandscapeRight:
 			bounds.size.width -= frame.size.width;
 			break;
+        case UIInterfaceOrientationUnknown:
+            bounds.origin.y += frame.size.height;
+            bounds.size.height -= frame.size.height;
+            break;
 	}
 	[UIView beginAnimations:nil context:nil];
 	[UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
@@ -347,7 +360,10 @@ void exceptionHandler(NSException *exception)
 		case UIInterfaceOrientationLandscapeRight:
 			bounds.origin.x += frame.size.width;
 			bounds.size.width -= frame.size.width;
-			break;
+            break;
+        case UIInterfaceOrientationUnknown:
+            bounds.size.height -= frame.size.height;
+            break;
 	}
 	self.view.frame = bounds;
 	
@@ -388,6 +404,7 @@ void exceptionHandler(NSException *exception)
 
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
+    /*
 	if (![textField.text isEqualToString:@""])
 	{
 		[iConsole log:textField.text];
@@ -396,6 +413,18 @@ void exceptionHandler(NSException *exception)
         
 		textField.text = @"";
 	}
+     */
+    if (![textField.text isEqualToString:@""]) {
+        switch ([iConsoleManager sharediConsoleManager].cmdType) {
+            case CMDTypeFind:{
+                [_consoleView scrollToString:textField.text searchOptions:NSRegularExpressionCaseInsensitive animated:YES atScrollPosition:ICTextViewScrollPositionMiddle];
+            }
+                break;
+                
+            default:
+                break;
+        }
+    }
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
@@ -513,13 +542,14 @@ void exceptionHandler(NSException *exception)
 
 - (void)viewDidLoad
 {
+    [super viewDidLoad];
     [iConsoleManager sharediConsoleManager];
     
     self.view.clipsToBounds = YES;
 	self.view.backgroundColor = _backgroundColor;
 	self.view.autoresizesSubviews = YES;
 
-	_consoleView = [[UITextView alloc] initWithFrame:self.view.bounds];
+	_consoleView = [[ICTextView alloc] initWithFrame:self.view.bounds];
 	_consoleView.font = [UIFont fontWithName:@"Courier" size:12];
 	_consoleView.textColor = _textColor;
 	_consoleView.backgroundColor = [UIColor clearColor];
@@ -732,6 +762,7 @@ void exceptionHandler(NSException *exception)
 			
 			switch ([UIApplication sharedApplication].statusBarOrientation)
             {
+                case UIInterfaceOrientationUnknown:
 				case UIInterfaceOrientationPortrait:
                 {
 					if (allUp)

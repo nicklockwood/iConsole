@@ -27,6 +27,7 @@
 		B39B070119381DCF0007C77F /* iConsolePopupMenuItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = B39B06F919381DCF0007C77F /* iConsolePopupMenuItemView.m */; };
 		B39B070219381DCF0007C77F /* iConsolePopupMenuOverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = B39B06FB19381DCF0007C77F /* iConsolePopupMenuOverlayView.m */; };
 		B39B070319381DCF0007C77F /* iConsolePopupMenuPagenatorView.m in Sources */ = {isa = PBXBuildFile; fileRef = B39B06FD19381DCF0007C77F /* iConsolePopupMenuPagenatorView.m */; };
+		B3DAE4E9193D62C100AE1784 /* ICTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = B3DAE4E8193D62C100AE1784 /* ICTextView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -64,6 +65,9 @@
 		B39B06FB19381DCF0007C77F /* iConsolePopupMenuOverlayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iConsolePopupMenuOverlayView.m; sourceTree = "<group>"; };
 		B39B06FC19381DCF0007C77F /* iConsolePopupMenuPagenatorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iConsolePopupMenuPagenatorView.h; sourceTree = "<group>"; };
 		B39B06FD19381DCF0007C77F /* iConsolePopupMenuPagenatorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iConsolePopupMenuPagenatorView.m; sourceTree = "<group>"; };
+		B3DAE4E7193D62C100AE1784 /* ICTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ICTextView.h; sourceTree = "<group>"; };
+		B3DAE4E8193D62C100AE1784 /* ICTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ICTextView.m; sourceTree = "<group>"; };
+		B3E9BC87193D7F3E002923F6 /* HelloWorld-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "HelloWorld-Bridging-Header.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +113,8 @@
 				B39B06FB19381DCF0007C77F /* iConsolePopupMenuOverlayView.m */,
 				B39B06FC19381DCF0007C77F /* iConsolePopupMenuPagenatorView.h */,
 				B39B06FD19381DCF0007C77F /* iConsolePopupMenuPagenatorView.m */,
+				B3DAE4E7193D62C100AE1784 /* ICTextView.h */,
+				B3DAE4E8193D62C100AE1784 /* ICTextView.m */,
 			);
 			name = iConsole;
 			path = ../../iConsole;
@@ -144,6 +150,7 @@
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
+				B3E9BC87193D7F3E002923F6 /* HelloWorld-Bridging-Header.h */,
 			);
 			name = CustomTemplate;
 			sourceTree = "<group>";
@@ -253,6 +260,7 @@
 				B39B070219381DCF0007C77F /* iConsolePopupMenuOverlayView.m in Sources */,
 				B39B070019381DCF0007C77F /* iConsolePopupMenuItem.m in Sources */,
 				B39B06FE19381DCF0007C77F /* iConsolePlasticPopupMenu.m in Sources */,
+				B3DAE4E9193D62C100AE1784 /* ICTextView.m in Sources */,
 				B39B06FF19381DCF0007C77F /* iConsolePopupMenu.m in Sources */,
 				B39B070119381DCF0007C77F /* iConsolePopupMenuItemView.m in Sources */,
 				28D7ACF80DDB3853001CB0EB /* HelloWorldViewController.m in Sources */,
@@ -269,6 +277,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -277,8 +286,11 @@
 				GCC_PREFIX_HEADER = HelloWorld_Prefix.pch;
 				INFOPLIST_FILE = "HelloWorld-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = iConsole;
 				SDKROOT = iphoneos;
+				SWIFT_OBJC_BRIDGING_HEADER = "HelloWorld-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -288,14 +300,17 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = HelloWorld_Prefix.pch;
 				INFOPLIST_FILE = "HelloWorld-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = iConsole;
 				SDKROOT = iphoneos;
+				SWIFT_OBJC_BRIDGING_HEADER = "HelloWorld-Bridging-Header.h";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
