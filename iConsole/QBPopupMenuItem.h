@@ -13,7 +13,7 @@
 #else
 #define weak_safe unsafe_unretained
 #endif
-@interface iConsolePopupMenuItem : NSObject
+@interface QBPopupMenuItem : NSObject
 
 @property (nonatomic, weak_safe, readonly) id target;
 @property (nonatomic, assign, readonly) SEL action;

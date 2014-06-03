@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-#import "iConsolePopupMenuItem.h"
+#import "QBPopupMenuItem.h"
 
 
 #undef weak_safe
@@ -18,17 +18,17 @@
 #define weak_safe unsafe_unretained
 #endif
 
-@class iConsolePopupMenu;
-@class iConsolePopupMenuItemView;
-@class iConsolePopupMenuPagenatorView;
+@class QBPopupMenu;
+@class QBPopupMenuItemView;
+@class QBPopupMenuPagenatorView;
 
 @protocol QBPopupMenuDelegate <NSObject>
 
 @optional
-- (void)popupMenuWillAppear:(iConsolePopupMenu *)popupMenu;
-- (void)popupMenuDidAppear:(iConsolePopupMenu *)popupMenu;
-- (void)popupMenuWillDisappear:(iConsolePopupMenu *)popupMenu;
-- (void)popupMenuDidDisappear:(iConsolePopupMenu *)popupMenu;
+- (void)popupMenuWillAppear:(QBPopupMenu *)popupMenu;
+- (void)popupMenuDidAppear:(QBPopupMenu *)popupMenu;
+- (void)popupMenuWillDisappear:(QBPopupMenu *)popupMenu;
+- (void)popupMenuDidDisappear:(QBPopupMenu *)popupMenu;
 
 @end
 
@@ -40,7 +40,7 @@ typedef NS_ENUM(NSUInteger, QBPopupMenuArrowDirection) {
     QBPopupMenuArrowDirectionRight
 };
 
-@interface iConsolePopupMenu : UIView
+@interface QBPopupMenu : UIView
 
 @property (nonatomic, weak_safe) id<QBPopupMenuDelegate> delegate;
 

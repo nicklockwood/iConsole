@@ -58,6 +58,7 @@
 @property (nonatomic, strong) UITextField *inputField;
 @property (nonatomic, strong) UIButton *actionButton;
 @property (nonatomic, strong) UIButton *pathButton;
+@property (nonatomic, strong) UILabel *matchNumLabel;
 @property (nonatomic, strong) NSMutableArray *log;
 @property (nonatomic, assign) BOOL animating;
 
@@ -180,6 +181,14 @@ void exceptionHandler(NSException *exception)
     //pop up command type menu
     UIButton *button = (id)sender;
     [[iConsoleManager sharediConsoleManager].commandMenu showInView:self.view targetRect:button.frame animated:YES];
+}
+
+- (void)commandAction:(id)sender
+{
+    [iConsoleManager sharediConsoleManager].cmdType = CMDTypeFind;
+    if (_delegate) {
+        _inputField.placeholder = @"Find";
+    }
 }
 
 - (CGAffineTransform)viewTransform
@@ -404,27 +413,20 @@ void exceptionHandler(NSException *exception)
 
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
-    /*
-	if (![textField.text isEqualToString:@""])
-	{
-		[iConsole log:textField.text];
-        NSLog(@"iConsoleLog %@", [[NSUserDefaults standardUserDefaults] objectForKey:kiConsoleLog]);
-		[_delegate handleConsoleCommand:textField.text];
-        
-		textField.text = @"";
-	}
-     */
-    if (![textField.text isEqualToString:@""]) {
-        switch ([iConsoleManager sharediConsoleManager].cmdType) {
-            case CMDTypeFind:{
-                [_consoleView scrollToString:textField.text searchOptions:NSRegularExpressionCaseInsensitive animated:YES atScrollPosition:ICTextViewScrollPositionMiddle];
-            }
-                break;
-                
-            default:
-                break;
-        }
+    switch ([iConsoleManager sharediConsoleManager].cmdType) {
+        case CMDTypeFind:
+            [_consoleView resetSearch];
+            break;
+            
+        default:
+            break;
     }
+}
+
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
+{
+    [self textFieldDidChange:textField];
+    return YES;
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
@@ -438,6 +440,32 @@ void exceptionHandler(NSException *exception)
 	return YES;
 }
 
+- (void)textFieldDidChange:(UITextField *)textField
+{
+    switch ([iConsoleManager sharediConsoleManager].cmdType) {
+        case CMDTypeFind:{
+            
+            if ([textField.text isEqualToString:@""]) {
+                [_consoleView resetSearch];
+                _matchNumLabel.text = @"";
+            } else {
+                [_consoleView scrollToString:textField.text searchOptions:NSRegularExpressionCaseInsensitive animated:YES atScrollPosition:ICTextViewScrollPositionTop];
+                if (_consoleView.matchingCount == 0) {
+                    _matchNumLabel.text = @"Not found";
+                } else {
+                    _matchNumLabel.text = [NSString stringWithFormat:@"%@ matches",@(_consoleView.matchingCount)];
+                }
+            }
+            
+        }
+            
+            break;
+        default:
+            break;
+    }
+
+   
+}
 
 #pragma mark -
 #pragma mark UIActionSheetDelegate methods
@@ -504,7 +532,7 @@ void exceptionHandler(NSException *exception)
         _deviceShakeToShow = NO;
         
         self.infoString = @"iConsole: Copyright © 2010 Charcoal Design";
-        self.inputPlaceholderString = @"Enter command...";
+        self.inputPlaceholderString = @"Find";
         self.logSubmissionEmail = nil;
         
         self.backgroundColor = [UIColor blackColor];
@@ -556,6 +584,8 @@ void exceptionHandler(NSException *exception)
     _consoleView.indicatorStyle = _indicatorStyle;
 	_consoleView.editable = NO;
 	_consoleView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+    _consoleView.primaryHighlightColor = [UIColor colorWithRed:0.93 green:0.89 blue:0 alpha:.8];
+    _consoleView.secondaryHighlightColor = [UIColor colorWithRed:1 green:1 blue:1 alpha:.75];
 	[self setConsoleText];
 	[self.view addSubview:_consoleView];
 	
@@ -587,6 +617,7 @@ void exceptionHandler(NSException *exception)
 		_inputField.placeholder = _inputPlaceholderString;
 		_inputField.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
 		_inputField.delegate = self;
+        [_inputField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
 		CGRect frame = self.view.bounds;
 		frame.size.height -= EDITFIELD_HEIGHT + 10;
 		_consoleView.frame = frame;
@@ -602,6 +633,18 @@ void exceptionHandler(NSException *exception)
         self.pathButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
         [self.pathButton addTarget:self action:@selector(command:) forControlEvents:UIControlEventTouchUpInside];
         [self.view addSubview:self.pathButton];
+        
+        _matchNumLabel = ({
+            UILabel *matchLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 80, 20)];
+            matchLabel.font = [UIFont systemFontOfSize:10];
+            matchLabel.textAlignment = NSTextAlignmentRight;
+            matchLabel.center = CGPointMake(CGRectGetWidth(_inputField.bounds) - CGRectGetMidX(matchLabel.bounds) - EDITFIELD_HEIGHT, CGRectGetMidY(_inputField.bounds));
+            [_inputField addSubview:matchLabel];
+            matchLabel;
+        });
+        
+        
+
         
 		
 		[[NSNotificationCenter defaultCenter] addObserver:self

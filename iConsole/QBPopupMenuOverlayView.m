@@ -6,11 +6,11 @@
 //  Copyright (c) 2013年 Katsuma Tanaka. All rights reserved.
 //
 
-#import "iConsolePopupMenuOverlayView.h"
+#import "QBPopupMenuOverlayView.h"
 
-#import "iConsolePopupMenu.h"
+#import "QBPopupMenu.h"
 
-@implementation iConsolePopupMenuOverlayView
+@implementation QBPopupMenuOverlayView
 
 - (instancetype)initWithFrame:(CGRect)frame
 {

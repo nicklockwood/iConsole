@@ -6,9 +6,9 @@
 //  Copyright (c) 2013年 Katsuma Tanaka. All rights reserved.
 //
 
-#import "iConsolePopupMenuPagenatorView.h"
+#import "QBPopupMenuPagenatorView.h"
 
-@implementation iConsolePopupMenuPagenatorView
+@implementation QBPopupMenuPagenatorView
 
 + (CGFloat)pagenatorWidth
 {

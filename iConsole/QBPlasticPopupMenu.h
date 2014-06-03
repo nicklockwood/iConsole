@@ -6,9 +6,9 @@
 //  Copyright (c) 2013年 Katsuma Tanaka. All rights reserved.
 //
 
-#import "iConsolePopupMenu.h"
+#import "QBPopupMenu.h"
 
-@interface iConsolePlasticPopupMenu : iConsolePopupMenu
+@interface QBPlasticPopupMenu : QBPopupMenu
 
 // NOTE: When subclassing this class, use these methods to customize the appearance.
 - (CGMutablePathRef)upperHeadPathInRect:(CGRect)rect cornerRadius:(CGFloat)cornerRadius CF_RETURNS_RETAINED;

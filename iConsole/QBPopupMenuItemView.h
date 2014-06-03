@@ -8,8 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-@class iConsolePopupMenu;
-@class iConsolePopupMenuItem;
+@class QBPopupMenu;
+@class QBPopupMenuItem;
 
 #undef weak_safe
 #if __has_feature(objc_arc_weak)
@@ -18,18 +18,18 @@
 #define weak_safe unsafe_unretained
 #endif
 
-@interface iConsolePopupMenuItemView : UIView
+@interface QBPopupMenuItemView : UIView
 
-@property (nonatomic, weak_safe) iConsolePopupMenu *popupMenu;
+@property (nonatomic, weak_safe) QBPopupMenu *popupMenu;
 
 @property (nonatomic, strong, readonly) UIButton *button;
 @property (nonatomic, strong) UIImage *image;
 @property (nonatomic, strong) UIImage *highlightedImage;
 
-@property (nonatomic, strong) iConsolePopupMenuItem *item;
+@property (nonatomic, strong) QBPopupMenuItem *item;
 
-+ (instancetype)itemViewWithItem:(iConsolePopupMenuItem *)item;
-- (instancetype)initWithItem:(iConsolePopupMenuItem *)item;
++ (instancetype)itemViewWithItem:(QBPopupMenuItem *)item;
+- (instancetype)initWithItem:(QBPopupMenuItem *)item;
 
 - (void)performAction;
 

@@ -6,25 +6,25 @@
 //  Copyright (c) 2013年 Katsuma Tanaka. All rights reserved.
 //
 
-#import "iConsolePopupMenuItemView.h"
+#import "QBPopupMenuItemView.h"
 
-#import "iConsolePopupMenu.h"
-#import "iConsolePopupMenuItem.h"
+#import "QBPopupMenu.h"
+#import "QBPopupMenuItem.h"
 
-@interface iConsolePopupMenuItemView ()
+@interface QBPopupMenuItemView ()
 
 @property (nonatomic, strong, readwrite) UIButton *button;
 
 @end
 
-@implementation iConsolePopupMenuItemView
+@implementation QBPopupMenuItemView
 
-+ (instancetype)itemViewWithItem:(iConsolePopupMenuItem *)item
++ (instancetype)itemViewWithItem:(QBPopupMenuItem *)item
 {
     return [[self alloc] initWithItem:item];
 }
 
-- (instancetype)initWithItem:(iConsolePopupMenuItem *)item
+- (instancetype)initWithItem:(QBPopupMenuItem *)item
 {
     self = [super initWithFrame:CGRectZero];
     
@@ -82,7 +82,7 @@
     return [self.button backgroundImageForState:UIControlStateHighlighted];
 }
 
-- (void)setItem:(iConsolePopupMenuItem *)item
+- (void)setItem:(QBPopupMenuItem *)item
 {
     _item = item;
     

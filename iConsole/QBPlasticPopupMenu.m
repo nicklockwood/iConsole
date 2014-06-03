@@ -6,9 +6,9 @@
 //  Copyright (c) 2013年 Katsuma Tanaka. All rights reserved.
 //
 
-#import "iConsolePlasticPopupMenu.h"
+#import "QBPlasticPopupMenu.h"
 
-@implementation iConsolePlasticPopupMenu
+@implementation QBPlasticPopupMenu
 
 #pragma mark - Creating Paths
 

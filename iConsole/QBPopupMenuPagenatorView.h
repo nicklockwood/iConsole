@@ -6,7 +6,7 @@
 //  Copyright (c) 2013年 Katsuma Tanaka. All rights reserved.
 //
 
-#import "iConsolePopupMenuItemView.h"
+#import "QBPopupMenuItemView.h"
 
 typedef NS_ENUM(NSUInteger, QBPopupMenuPagenatorDirection) {
     QBPopupMenuPagenatorDirectionLeft,
@@ -20,7 +20,7 @@ typedef NS_ENUM(NSUInteger, QBPopupMenuPagenatorDirection) {
 #define weak_safe unsafe_unretained
 #endif
 
-@interface iConsolePopupMenuPagenatorView : iConsolePopupMenuItemView
+@interface QBPopupMenuPagenatorView : QBPopupMenuItemView
 
 @property (nonatomic, weak_safe) id target;
 @property (nonatomic, assign) SEL action;

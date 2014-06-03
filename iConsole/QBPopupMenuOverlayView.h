@@ -13,10 +13,10 @@
 #else
 #define weak_safe unsafe_unretained
 #endif
-@class iConsolePopupMenu;
+@class QBPopupMenu;
 
-@interface iConsolePopupMenuOverlayView : UIView
+@interface QBPopupMenuOverlayView : UIView
 
-@property (nonatomic, weak_safe) iConsolePopupMenu *popupMenu;
+@property (nonatomic, weak_safe) QBPopupMenu *popupMenu;
 
 @end

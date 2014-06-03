@@ -6,9 +6,9 @@
 //  Copyright (c) 2013年 Katsuma Tanaka. All rights reserved.
 //
 
-#import "iConsolePopupMenuItem.h"
+#import "QBPopupMenuItem.h"
 
-@interface iConsolePopupMenuItem ()
+@interface QBPopupMenuItem ()
 
 @property (nonatomic, weak_safe, readwrite) id target;
 @property (nonatomic, assign, readwrite) SEL action;
@@ -18,7 +18,7 @@
 
 @end
 
-@implementation iConsolePopupMenuItem
+@implementation QBPopupMenuItem
 
 + (instancetype)itemWithTitle:(NSString *)title target:(id)target action:(SEL)action
 {

@@ -6,18 +6,18 @@
 //  Copyright (c) 2013年 Katsuma Tanaka. All rights reserved.
 //
 
-#import "iConsolePopupMenu.h"
+#import "QBPopupMenu.h"
 
-#import "iConsolePopupMenuOverlayView.h"
-#import "iConsolePopupMenuItemView.h"
-#import "iConsolePopupMenuPagenatorView.h"
+#import "QBPopupMenuOverlayView.h"
+#import "QBPopupMenuItemView.h"
+#import "QBPopupMenuPagenatorView.h"
 
 static const NSTimeInterval kQBPopupMenuAnimationDuration = 0.2;
 
-@interface iConsolePopupMenu ()
+@interface QBPopupMenu ()
 
 @property (nonatomic, assign, getter = isVisible, readwrite) BOOL visible;
-@property (nonatomic, strong) iConsolePopupMenuOverlayView *overlayView;
+@property (nonatomic, strong) QBPopupMenuOverlayView *overlayView;
 
 @property (nonatomic, weak_safe) UIView *view;
 @property (nonatomic, assign) CGRect targetRect;
@@ -32,16 +32,16 @@ static const NSTimeInterval kQBPopupMenuAnimationDuration = 0.2;
 
 @end
 
-@implementation iConsolePopupMenu
+@implementation QBPopupMenu
 
 + (Class)itemViewClass
 {
-    return [iConsolePopupMenuItemView class];
+    return [QBPopupMenuItemView class];
 }
 
 + (Class)pagenatorViewClass
 {
-    return [iConsolePopupMenuPagenatorView class];
+    return [QBPopupMenuPagenatorView class];
 }
 
 + (instancetype)popupMenuWithItems:(NSArray *)items
@@ -159,7 +159,7 @@ static const NSTimeInterval kQBPopupMenuAnimationDuration = 0.2;
     
     // Create overlay view
     self.overlayView = ({
-        iConsolePopupMenuOverlayView *overlayView = [[iConsolePopupMenuOverlayView alloc] initWithFrame:view.bounds];
+        QBPopupMenuOverlayView *overlayView = [[QBPopupMenuOverlayView alloc] initWithFrame:view.bounds];
         overlayView.popupMenu = self;
         
         overlayView;
@@ -272,8 +272,8 @@ static const NSTimeInterval kQBPopupMenuAnimationDuration = 0.2;
 {
     NSMutableArray *itemViews = [NSMutableArray array];
     
-    for (iConsolePopupMenuItem *item in self.items) {
-        iConsolePopupMenuItemView *itemView = [[[self class] itemViewClass] itemViewWithItem:item];
+    for (QBPopupMenuItem *item in self.items) {
+        QBPopupMenuItemView *itemView = [[[self class] itemViewClass] itemViewWithItem:item];
         itemView.popupMenu = self;
         
         [itemViews addObject:itemView];
@@ -282,7 +282,7 @@ static const NSTimeInterval kQBPopupMenuAnimationDuration = 0.2;
     self.itemViews = itemViews;
 }
 
-- (void)resetItemViewState:(iConsolePopupMenuItemView *)itemView
+- (void)resetItemViewState:(QBPopupMenuItemView *)itemView
 {
     // NOTE: Reset properties related to the size of the button before colling sizeThatFits: of item view,
     //       or the size of the view will change from the second time.
@@ -295,7 +295,7 @@ static const NSTimeInterval kQBPopupMenuAnimationDuration = 0.2;
 {
     NSMutableArray *groupedItemViews = [NSMutableArray array];
     
-    CGFloat pagenatorWidth = [iConsolePopupMenuPagenatorView pagenatorWidth];
+    CGFloat pagenatorWidth = [QBPopupMenuPagenatorView pagenatorWidth];
     
     // Create new array
     NSMutableArray *itemViews = [NSMutableArray array];
@@ -304,7 +304,7 @@ static const NSTimeInterval kQBPopupMenuAnimationDuration = 0.2;
         width += self.arrowSize;
     }
     
-    for (iConsolePopupMenuItemView *itemView in self.itemViews) {
+    for (QBPopupMenuItemView *itemView in self.itemViews) {
         // Clear state
         [self resetItemViewState:itemView];
         
@@ -344,7 +344,7 @@ static const NSTimeInterval kQBPopupMenuAnimationDuration = 0.2;
     NSUInteger numberOfPages = self.groupedItemViews.count;
     
     if (numberOfPages > 1 && page != 0) {
-        iConsolePopupMenuPagenatorView *leftPagenatorView = [[[self class] pagenatorViewClass] leftPagenatorViewWithTarget:self action:@selector(showPreviousPage)];
+        QBPopupMenuPagenatorView *leftPagenatorView = [[[self class] pagenatorViewClass] leftPagenatorViewWithTarget:self action:@selector(showPreviousPage)];
         
         [self addSubview:leftPagenatorView];
         [visibleItemViews addObject:leftPagenatorView];
@@ -352,13 +352,13 @@ static const NSTimeInterval kQBPopupMenuAnimationDuration = 0.2;
     
     NSArray *itemViews = [self.groupedItemViews objectAtIndex:page];
     
-    for (iConsolePopupMenuItemView *itemView in itemViews) {
+    for (QBPopupMenuItemView *itemView in itemViews) {
         [self addSubview:itemView];
         [visibleItemViews addObject:itemView];
     }
     
     if (numberOfPages > 1 && page != numberOfPages - 1) {
-        iConsolePopupMenuPagenatorView *rightPagenatorView = [[[self class] pagenatorViewClass] rightPagenatorViewWithTarget:self action:@selector(showNextPage)];
+        QBPopupMenuPagenatorView *rightPagenatorView = [[[self class] pagenatorViewClass] rightPagenatorViewWithTarget:self action:@selector(showNextPage)];
         
         [self addSubview:rightPagenatorView];
         [visibleItemViews addObject:rightPagenatorView];
@@ -376,7 +376,7 @@ static const NSTimeInterval kQBPopupMenuAnimationDuration = 0.2;
     
     CGFloat offset = 0;
     for (NSInteger i = 0; i < self.visibleItemViews.count; i++) {
-        iConsolePopupMenuItemView *itemView = [self.visibleItemViews objectAtIndex:i];
+        QBPopupMenuItemView *itemView = [self.visibleItemViews objectAtIndex:i];
         
         // Clear state
         [self resetItemViewState:itemView];
@@ -523,7 +523,7 @@ static const NSTimeInterval kQBPopupMenuAnimationDuration = 0.2;
     UIImage *popupMenuHighlightedImage = [self popupMenuImageWithHighlighted:YES];
     
     for (NSInteger i = 0; i < self.visibleItemViews.count; i++) {
-        iConsolePopupMenuItemView *itemView = [self.visibleItemViews objectAtIndex:i];
+        QBPopupMenuItemView *itemView = [self.visibleItemViews objectAtIndex:i];
         
         UIImage *image = [self cropImageFromImage:popupMenuImage inRect:itemView.frame];
         UIImage *highlightedImage = [self cropImageFromImage:popupMenuHighlightedImage inRect:itemView.frame];
@@ -557,7 +557,7 @@ static const NSTimeInterval kQBPopupMenuAnimationDuration = 0.2;
     CGFloat height = self.height;
     
     for (NSInteger i = 0; i < self.visibleItemViews.count; i++) {
-        iConsolePopupMenuItemView *itemView = [self.visibleItemViews objectAtIndex:i];
+        QBPopupMenuItemView *itemView = [self.visibleItemViews objectAtIndex:i];
         CGRect frame = itemView.frame;
         
         if (i == 0) {
@@ -809,7 +809,7 @@ static const NSTimeInterval kQBPopupMenuAnimationDuration = 0.2;
     
     // Separator
     if (direction == QBPopupMenuArrowDirectionDown || direction == QBPopupMenuArrowDirectionUp) {
-        for (iConsolePopupMenuItemView *itemView in self.visibleItemViews) {
+        for (QBPopupMenuItemView *itemView in self.visibleItemViews) {
             [self drawSeparatorInRect:CGRectMake(itemView.frame.origin.x + itemView.frame.size.width - 1, rect.origin.y, 1, rect.size.height)];
         }
     }
