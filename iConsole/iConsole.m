@@ -624,15 +624,19 @@ void exceptionHandler(NSException *exception)
 		_consoleView.frame = frame;
 		[self.view addSubview:_inputField];
         
-        self.pathButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        self.pathButton.frame = CGRectMake(2, self.view.frame.size.height - EDITFIELD_HEIGHT - 5, ACTION_BUTTON_WIDTH, ACTION_BUTTON_WIDTH);
-        [self.pathButton setTitle:@"⌘" forState:UIControlStateNormal];
-        self.pathButton.titleLabel.font = [UIFont boldSystemFontOfSize:ACTION_BUTTON_WIDTH];
-        self.pathButton.titleLabel.textAlignment = NSTextAlignmentCenter;
-        [self.pathButton setTitleColor:_textColor forState:UIControlStateNormal];
-        [self.pathButton setTitleColor:[_textColor colorWithAlphaComponent:0.5f] forState:UIControlStateHighlighted];
-        self.pathButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
-        [self.pathButton addTarget:self action:@selector(command:) forControlEvents:UIControlEventTouchUpInside];
+        
+        self.pathButton = ({
+            UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+            button.frame = CGRectMake(2, self.view.frame.size.height - EDITFIELD_HEIGHT - 5, ACTION_BUTTON_WIDTH, ACTION_BUTTON_WIDTH);
+            [button setTitle:@"⌘" forState:UIControlStateNormal];
+            button.titleLabel.font = [UIFont boldSystemFontOfSize:ACTION_BUTTON_WIDTH];
+            button.titleLabel.textAlignment = NSTextAlignmentCenter;
+            [button setTitleColor:_textColor forState:UIControlStateNormal];
+            [button setTitleColor:[_textColor colorWithAlphaComponent:0.5f] forState:UIControlStateHighlighted];
+            button.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin;
+            [button addTarget:self action:@selector(command:) forControlEvents:UIControlEventTouchUpInside];
+            button;
+        });
         [self.view addSubview:self.pathButton];
         
         _matchNumLabel = ({
@@ -643,10 +647,6 @@ void exceptionHandler(NSException *exception)
             [_inputField addSubview:matchLabel];
             matchLabel;
         });
-        
-        
-
-        
 		
 		[[NSNotificationCenter defaultCenter] addObserver:self
 												 selector:@selector(keyboardWillShow:)
