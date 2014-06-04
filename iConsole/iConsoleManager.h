@@ -12,6 +12,7 @@
 
 typedef NS_ENUM(NSUInteger, CMDType){
     CMDTypeFind = 1,
+    CMDTypeVersion
 };
 
 

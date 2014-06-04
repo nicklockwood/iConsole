@@ -173,7 +173,10 @@ void exceptionHandler(NSException *exception)
                                               otherButtonTitles:@"Send by Email", nil];
 
 	sheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
+    sheet.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+    [sheet setTranslatesAutoresizingMaskIntoConstraints:NO];
 	[sheet showInView:self.view];
+    
 }
 
 - (void)command:(id)sender
@@ -183,11 +186,21 @@ void exceptionHandler(NSException *exception)
     [[iConsoleManager sharediConsoleManager].commandMenu showInView:self.view targetRect:button.frame animated:YES];
 }
 
-- (void)commandAction:(id)sender
+- (void)commandAction
 {
-    [iConsoleManager sharediConsoleManager].cmdType = CMDTypeFind;
-    if (_delegate) {
-        _inputField.placeholder = @"Find";
+    switch ([iConsoleManager sharediConsoleManager].cmdType) {
+        case CMDTypeFind: {
+            if (_delegate) {
+                _inputField.placeholder = @"Find";
+            }
+        }
+            break;
+        case CMDTypeVersion:{
+            [iConsole log:@"Your app version:%@", [[[NSBundle mainBundle] infoDictionary] objectForKey:(NSString *)kCFBundleVersionKey]];
+        }
+            break;
+        default:
+            break;
     }
 }
 
@@ -638,7 +651,6 @@ void exceptionHandler(NSException *exception)
             button;
         });
         [self.view addSubview:self.pathButton];
-        
         _matchNumLabel = ({
             UILabel *matchLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 80, 20)];
             matchLabel.font = [UIFont systemFontOfSize:10];

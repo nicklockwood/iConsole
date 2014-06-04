@@ -30,8 +30,11 @@
         self.openCMD = YES;
         
         self.commandItems = [NSMutableArray arrayWithObjects:({
-            QBPopupMenuItem *item1 = [QBPopupMenuItem itemWithTitle:@"Find" target:[iConsole sharedConsole] action:@selector(commandAction:)];
+            QBPopupMenuItem *item1 = [QBPopupMenuItem itemWithTitle:@"Find" target:self action:@selector(commandAction:)];
             item1;
+        }),({
+            QBPopupMenuItem *item2 = [QBPopupMenuItem itemWithTitle:@"Version" target:self action:@selector(commandAction:)];
+            item2;
         }),nil];
         
         self.commandMenu = ({
@@ -42,6 +45,17 @@
         });
     }
     return self;
+}
+
+- (void)commandAction:(id)sender
+{
+    QBPopupMenuItem *item = (id)sender;
+    if ([item.title isEqualToString: @"Find"]) {
+        self.cmdType = CMDTypeFind;
+    } else if ([item.title isEqualToString:@"Version"]) {
+        self.cmdType = CMDTypeVersion;
+    }
+    [[iConsole sharedConsole] performSelector:@selector(commandAction)];
 }
 
 - (void)setOpenCMD:(BOOL)openCMD
