@@ -210,8 +210,9 @@ void exceptionHandler(NSException *exception)
 		case UIInterfaceOrientationLandscapeRight:
 			angle = M_PI_2;
 			break;
-        case UIInterfaceOrientationUnknown:
-            angle = 0;
+            
+//        case UIInterfaceOrientationUnknown:
+//            angle = 0;
             break;
 	}
 	return CGAffineTransformMakeRotation(angle);
@@ -239,9 +240,9 @@ void exceptionHandler(NSException *exception)
 		case UIInterfaceOrientationLandscapeRight:
 			frame.origin.x = -frame.size.width;
 			break;
-        case UIInterfaceOrientationUnknown:
-            frame.origin.y = frame.size.height;
-            break;
+//        case UIInterfaceOrientationUnknown:
+//            frame.origin.y = frame.size.height;
+//            break;
 	}
 	return frame;
 }
@@ -330,10 +331,10 @@ void exceptionHandler(NSException *exception)
 		case UIInterfaceOrientationLandscapeRight:
 			bounds.size.width -= frame.size.width;
 			break;
-        case UIInterfaceOrientationUnknown:
-            bounds.origin.y += frame.size.height;
-            bounds.size.height -= frame.size.height;
-            break;
+//        case UIInterfaceOrientationUnknown:
+//            bounds.origin.y += frame.size.height;
+//            bounds.size.height -= frame.size.height;
+//            break;
 	}
 	[UIView beginAnimations:nil context:nil];
 	[UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
@@ -370,9 +371,9 @@ void exceptionHandler(NSException *exception)
 			bounds.origin.x += frame.size.width;
 			bounds.size.width -= frame.size.width;
             break;
-        case UIInterfaceOrientationUnknown:
-            bounds.size.height -= frame.size.height;
-            break;
+//        case UIInterfaceOrientationUnknown:
+//            bounds.size.height -= frame.size.height;
+//            break;
 	}
 	self.view.frame = bounds;
 	
@@ -805,7 +806,7 @@ void exceptionHandler(NSException *exception)
 			
 			switch ([UIApplication sharedApplication].statusBarOrientation)
             {
-                case UIInterfaceOrientationUnknown:
+//                case UIInterfaceOrientationUnknown:
 				case UIInterfaceOrientationPortrait:
                 {
 					if (allUp)
