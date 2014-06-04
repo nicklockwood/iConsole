@@ -645,6 +645,7 @@ void exceptionHandler(NSException *exception)
             matchLabel.textAlignment = NSTextAlignmentRight;
             matchLabel.center = CGPointMake(CGRectGetWidth(_inputField.bounds) - CGRectGetMidX(matchLabel.bounds) - EDITFIELD_HEIGHT, CGRectGetMidY(_inputField.bounds));
             [_inputField addSubview:matchLabel];
+            matchLabel.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin;
             matchLabel;
         });
 		
