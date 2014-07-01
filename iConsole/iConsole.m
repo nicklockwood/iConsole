@@ -33,7 +33,8 @@
 #import "iConsole.h"
 #import <stdarg.h>
 #import <string.h> 
-
+#import "iConsoleManager.h"
+#import "ICTextView.h"
 
 #import <Availability.h>
 #if !__has_feature(objc_arc)
@@ -48,13 +49,16 @@
 
 #define EDITFIELD_HEIGHT 28
 #define ACTION_BUTTON_WIDTH 28
+#define kiConsoleLog @"iConsoleLog"
 
 
 @interface iConsole() <UITextFieldDelegate, UIActionSheetDelegate>
 
-@property (nonatomic, strong) UITextView *consoleView;
+@property (nonatomic, strong) ICTextView *consoleView;
 @property (nonatomic, strong) UITextField *inputField;
 @property (nonatomic, strong) UIButton *actionButton;
+@property (nonatomic, strong) UIButton *pathButton;
+@property (nonatomic, strong) UILabel *matchNumLabel;
 @property (nonatomic, strong) NSMutableArray *log;
 @property (nonatomic, assign) BOOL animating;
 
@@ -121,13 +125,15 @@ void exceptionHandler(NSException *exception)
 	text = [text stringByAppendingString:@"\n--------------------------------------\n"];
 	text = [text stringByAppendingString:[[_log arrayByAddingObject:@">"] componentsJoinedByString:@"\n"]];
 	_consoleView.text = text;
-	
+    [_consoleView scrollRangeToVisible:NSMakeRange(0, 0)];
 	[_consoleView scrollRangeToVisible:NSMakeRange(_consoleView.text.length, 0)];
 }
 
 - (void)resetLog
 {
-	self.log = [NSMutableArray array];
+    [self.log removeAllObjects];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:kiConsoleLog];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 	[self setConsoleText];
 }
 
@@ -167,12 +173,42 @@ void exceptionHandler(NSException *exception)
                                               otherButtonTitles:@"Send by Email", nil];
 
 	sheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
+    sheet.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+    [sheet setTranslatesAutoresizingMaskIntoConstraints:NO];
 	[sheet showInView:self.view];
+    
+}
+
+- (void)command:(id)sender
+{
+    //pop up command type menu
+    UIButton *button = (id)sender;
+    [[iConsoleManager sharediConsoleManager].commandMenu showInView:self.view targetRect:button.frame animated:YES];
+}
+
+- (void)commandAction
+{
+    switch ([iConsoleManager sharediConsoleManager].cmdType) {
+        case CMDTypeFind: {
+            if (_delegate) {
+                _inputField.placeholder = @"Find";
+            }
+        }
+            break;
+        case CMDTypeVersion:{
+            [iConsole log:@"Your app version:%@", [[[NSBundle mainBundle] infoDictionary] objectForKey:(NSString *)kCFBundleVersionKey]];
+        }
+            break;
+        default:
+            break;
+    }
 }
 
 - (CGAffineTransform)viewTransform
 {
 	CGFloat angle = 0;
+    
+    
 	switch ([UIApplication sharedApplication].statusBarOrientation)
     {
         case UIInterfaceOrientationPortrait:
@@ -187,6 +223,10 @@ void exceptionHandler(NSException *exception)
 		case UIInterfaceOrientationLandscapeRight:
 			angle = M_PI_2;
 			break;
+            
+//        case UIInterfaceOrientationUnknown:
+//            angle = 0;
+            break;
 	}
 	return CGAffineTransformMakeRotation(angle);
 }
@@ -213,6 +253,9 @@ void exceptionHandler(NSException *exception)
 		case UIInterfaceOrientationLandscapeRight:
 			frame.origin.x = -frame.size.width;
 			break;
+//        case UIInterfaceOrientationUnknown:
+//            frame.origin.y = frame.size.height;
+//            break;
 	}
 	return frame;
 }
@@ -301,6 +344,10 @@ void exceptionHandler(NSException *exception)
 		case UIInterfaceOrientationLandscapeRight:
 			bounds.size.width -= frame.size.width;
 			break;
+//        case UIInterfaceOrientationUnknown:
+//            bounds.origin.y += frame.size.height;
+//            bounds.size.height -= frame.size.height;
+//            break;
 	}
 	[UIView beginAnimations:nil context:nil];
 	[UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
@@ -336,7 +383,10 @@ void exceptionHandler(NSException *exception)
 		case UIInterfaceOrientationLandscapeRight:
 			bounds.origin.x += frame.size.width;
 			bounds.size.width -= frame.size.width;
-			break;
+            break;
+//        case UIInterfaceOrientationUnknown:
+//            bounds.size.height -= frame.size.height;
+//            break;
 	}
 	self.view.frame = bounds;
 	
@@ -365,7 +415,7 @@ void exceptionHandler(NSException *exception)
 	{
 		[_log removeObjectAtIndex:0];
 	}
-    [[NSUserDefaults standardUserDefaults] setObject:_log forKey:@"iConsoleLog"];
+    [[NSUserDefaults standardUserDefaults] setObject:_log forKey:kiConsoleLog];
     if (self.view.superview)
     {
         [self setConsoleText];
@@ -377,12 +427,20 @@ void exceptionHandler(NSException *exception)
 
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
-	if (![textField.text isEqualToString:@""])
-	{
-		[iConsole log:textField.text];
-		[_delegate handleConsoleCommand:textField.text];
-		textField.text = @"";
-	}
+    switch ([iConsoleManager sharediConsoleManager].cmdType) {
+        case CMDTypeFind:
+            [_consoleView resetSearch];
+            break;
+            
+        default:
+            break;
+    }
+}
+
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
+{
+    [self textFieldDidChange:textField];
+    return YES;
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
@@ -396,6 +454,32 @@ void exceptionHandler(NSException *exception)
 	return YES;
 }
 
+- (void)textFieldDidChange:(UITextField *)textField
+{
+    switch ([iConsoleManager sharediConsoleManager].cmdType) {
+        case CMDTypeFind:{
+            
+            if ([textField.text isEqualToString:@""]) {
+                [_consoleView resetSearch];
+                _matchNumLabel.text = @"";
+            } else {
+                [_consoleView scrollToString:textField.text searchOptions:NSRegularExpressionCaseInsensitive animated:YES atScrollPosition:ICTextViewScrollPositionTop];
+                if (_consoleView.matchingCount == 0) {
+                    _matchNumLabel.text = @"Not found";
+                } else {
+                    _matchNumLabel.text = [NSString stringWithFormat:@"%@ matches",@(_consoleView.matchingCount)];
+                }
+            }
+            
+        }
+            
+            break;
+        default:
+            break;
+    }
+
+   
+}
 
 #pragma mark -
 #pragma mark UIActionSheetDelegate methods
@@ -462,7 +546,7 @@ void exceptionHandler(NSException *exception)
         _deviceShakeToShow = NO;
         
         self.infoString = @"iConsole: Copyright © 2010 Charcoal Design";
-        self.inputPlaceholderString = @"Enter command...";
+        self.inputPlaceholderString = @"Find";
         self.logSubmissionEmail = nil;
         
         self.backgroundColor = [UIColor blackColor];
@@ -470,7 +554,7 @@ void exceptionHandler(NSException *exception)
         self.indicatorStyle = UIScrollViewIndicatorStyleWhite;
         
         [[NSUserDefaults standardUserDefaults] synchronize];
-        self.log = [NSMutableArray arrayWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:@"iConsoleLog"]];
+        self.log = [NSMutableArray arrayWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:kiConsoleLog]];
         
         if (&UIApplicationDidEnterBackgroundNotification != NULL)
         {
@@ -500,17 +584,22 @@ void exceptionHandler(NSException *exception)
 
 - (void)viewDidLoad
 {
+    [super viewDidLoad];
+    [iConsoleManager sharediConsoleManager];
+    
     self.view.clipsToBounds = YES;
 	self.view.backgroundColor = _backgroundColor;
 	self.view.autoresizesSubviews = YES;
 
-	_consoleView = [[UITextView alloc] initWithFrame:self.view.bounds];
+	_consoleView = [[ICTextView alloc] initWithFrame:self.view.bounds];
 	_consoleView.font = [UIFont fontWithName:@"Courier" size:12];
 	_consoleView.textColor = _textColor;
 	_consoleView.backgroundColor = [UIColor clearColor];
     _consoleView.indicatorStyle = _indicatorStyle;
 	_consoleView.editable = NO;
 	_consoleView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+    _consoleView.primaryHighlightColor = [UIColor colorWithRed:0.93 green:0.89 blue:0 alpha:.8];
+    _consoleView.secondaryHighlightColor = [UIColor colorWithRed:1 green:1 blue:1 alpha:.75];
 	[self setConsoleText];
 	[self.view addSubview:_consoleView];
 	
@@ -525,11 +614,11 @@ void exceptionHandler(NSException *exception)
 	[_actionButton addTarget:self action:@selector(infoAction) forControlEvents:UIControlEventTouchUpInside];
 	_actionButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin;
 	[self.view addSubview:_actionButton];
-	
+    
 	if (_delegate)
 	{
-		_inputField = [[UITextField alloc] initWithFrame:CGRectMake(5, self.view.frame.size.height - EDITFIELD_HEIGHT - 5,
-                                                                    self.view.frame.size.width - 15 - ACTION_BUTTON_WIDTH,
+		_inputField = [[UITextField alloc] initWithFrame:CGRectMake(5 + ACTION_BUTTON_WIDTH, self.view.frame.size.height - EDITFIELD_HEIGHT - 5,
+                                                                    self.view.frame.size.width - 15 - ACTION_BUTTON_WIDTH *2,
                                                                     EDITFIELD_HEIGHT)];
 		_inputField.borderStyle = UITextBorderStyleRoundedRect;
 		_inputField.font = [UIFont fontWithName:@"Courier" size:12];
@@ -542,10 +631,35 @@ void exceptionHandler(NSException *exception)
 		_inputField.placeholder = _inputPlaceholderString;
 		_inputField.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
 		_inputField.delegate = self;
+        [_inputField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
 		CGRect frame = self.view.bounds;
 		frame.size.height -= EDITFIELD_HEIGHT + 10;
 		_consoleView.frame = frame;
 		[self.view addSubview:_inputField];
+        
+        
+        self.pathButton = ({
+            UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+            button.frame = CGRectMake(2, self.view.frame.size.height - EDITFIELD_HEIGHT - 5, ACTION_BUTTON_WIDTH, ACTION_BUTTON_WIDTH);
+            [button setTitle:@"⌘" forState:UIControlStateNormal];
+            button.titleLabel.font = [UIFont boldSystemFontOfSize:ACTION_BUTTON_WIDTH];
+            button.titleLabel.textAlignment = NSTextAlignmentCenter;
+            [button setTitleColor:_textColor forState:UIControlStateNormal];
+            [button setTitleColor:[_textColor colorWithAlphaComponent:0.5f] forState:UIControlStateHighlighted];
+            button.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin;
+            [button addTarget:self action:@selector(command:) forControlEvents:UIControlEventTouchUpInside];
+            button;
+        });
+        [self.view addSubview:self.pathButton];
+        _matchNumLabel = ({
+            UILabel *matchLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 80, 20)];
+            matchLabel.font = [UIFont systemFontOfSize:10];
+            matchLabel.textAlignment = NSTextAlignmentRight;
+            matchLabel.center = CGPointMake(CGRectGetWidth(_inputField.bounds) - CGRectGetMidX(matchLabel.bounds) - EDITFIELD_HEIGHT, CGRectGetMidY(_inputField.bounds));
+            [_inputField addSubview:matchLabel];
+            matchLabel.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin;
+            matchLabel;
+        });
 		
 		[[NSNotificationCenter defaultCenter] addObserver:self
 												 selector:@selector(keyboardWillShow:)
@@ -705,6 +819,7 @@ void exceptionHandler(NSException *exception)
 			
 			switch ([UIApplication sharedApplication].statusBarOrientation)
             {
+//                case UIInterfaceOrientationUnknown:
 				case UIInterfaceOrientationPortrait:
                 {
 					if (allUp)

@@ -8,6 +8,7 @@
 
 #import "HelloWorldViewController.h"
 #import "iConsole.h"
+#import "iConsoleManager.h"
 
 
 @implementation HelloWorldViewController
@@ -33,8 +34,9 @@
 {
     [super viewDidLoad];
     
-    [iConsole sharedConsole].delegate = self;
-	
+//    [iConsole sharedConsole].delegate = self;
+
+    
 	int touches = (TARGET_IPHONE_SIMULATOR ? [iConsole sharedConsole].simulatorTouchesToShow: [iConsole sharedConsole].deviceTouchesToShow);
 	if (touches > 0 && touches < 11)
 	{
@@ -71,19 +73,19 @@
 	return YES;
 }
 
-- (void)handleConsoleCommand:(NSString *)command
-{
-	if ([command isEqualToString:@"version"])
-	{
-		[iConsole info:@"%@ version %@",
-         [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"],
-		 [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]];
-	}
-	else 
-	{
-		[iConsole error:@"unrecognised command, try 'version' instead"];
-	}
-}
+//- (void)handleConsoleCommand:(NSString *)command
+//{
+//	if ([command isEqualToString:@"version"])
+//	{
+//		[iConsole info:@"%@ version %@",
+//         [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"],
+//		 [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]];
+//	}
+//	else 
+//	{
+//		[iConsole error:@"unrecognised command, try 'version' instead"];
+//	}
+//}
 
 - (void)viewDidUnload
 {

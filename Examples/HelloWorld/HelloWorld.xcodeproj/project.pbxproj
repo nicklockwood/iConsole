@@ -20,6 +20,14 @@
 		288765A50DF7441C002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765A40DF7441C002DB57D /* CoreGraphics.framework */; };
 		2899E5220DE3E06400AC0155 /* HelloWorldViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2899E5210DE3E06400AC0155 /* HelloWorldViewController.xib */; };
 		28D7ACF80DDB3853001CB0EB /* HelloWorldViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28D7ACF70DDB3853001CB0EB /* HelloWorldViewController.m */; };
+		B38A49121936D14E00FD52B6 /* iConsoleManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B38A49111936D14E00FD52B6 /* iConsoleManager.m */; };
+		B39B06FE19381DCF0007C77F /* QBPlasticPopupMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = B39B06F319381DCF0007C77F /* QBPlasticPopupMenu.m */; };
+		B39B06FF19381DCF0007C77F /* QBPopupMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = B39B06F519381DCF0007C77F /* QBPopupMenu.m */; };
+		B39B070019381DCF0007C77F /* QBPopupMenuItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B39B06F719381DCF0007C77F /* QBPopupMenuItem.m */; };
+		B39B070119381DCF0007C77F /* QBPopupMenuItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = B39B06F919381DCF0007C77F /* QBPopupMenuItemView.m */; };
+		B39B070219381DCF0007C77F /* QBPopupMenuOverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = B39B06FB19381DCF0007C77F /* QBPopupMenuOverlayView.m */; };
+		B39B070319381DCF0007C77F /* QBPopupMenuPagenatorView.m in Sources */ = {isa = PBXBuildFile; fileRef = B39B06FD19381DCF0007C77F /* QBPopupMenuPagenatorView.m */; };
+		B3DAE4E9193D62C100AE1784 /* ICTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = B3DAE4E8193D62C100AE1784 /* ICTextView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +51,23 @@
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* HelloWorld_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HelloWorld_Prefix.pch; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* HelloWorld-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "HelloWorld-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
+		B38A49101936D14E00FD52B6 /* iConsoleManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iConsoleManager.h; sourceTree = "<group>"; };
+		B38A49111936D14E00FD52B6 /* iConsoleManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iConsoleManager.m; sourceTree = "<group>"; };
+		B39B06F219381DCF0007C77F /* QBPlasticPopupMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QBPlasticPopupMenu.h; sourceTree = "<group>"; };
+		B39B06F319381DCF0007C77F /* QBPlasticPopupMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QBPlasticPopupMenu.m; sourceTree = "<group>"; };
+		B39B06F419381DCF0007C77F /* QBPopupMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QBPopupMenu.h; sourceTree = "<group>"; };
+		B39B06F519381DCF0007C77F /* QBPopupMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QBPopupMenu.m; sourceTree = "<group>"; };
+		B39B06F619381DCF0007C77F /* QBPopupMenuItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QBPopupMenuItem.h; sourceTree = "<group>"; };
+		B39B06F719381DCF0007C77F /* QBPopupMenuItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QBPopupMenuItem.m; sourceTree = "<group>"; };
+		B39B06F819381DCF0007C77F /* QBPopupMenuItemView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QBPopupMenuItemView.h; sourceTree = "<group>"; };
+		B39B06F919381DCF0007C77F /* QBPopupMenuItemView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QBPopupMenuItemView.m; sourceTree = "<group>"; };
+		B39B06FA19381DCF0007C77F /* QBPopupMenuOverlayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QBPopupMenuOverlayView.h; sourceTree = "<group>"; };
+		B39B06FB19381DCF0007C77F /* QBPopupMenuOverlayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QBPopupMenuOverlayView.m; sourceTree = "<group>"; };
+		B39B06FC19381DCF0007C77F /* QBPopupMenuPagenatorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QBPopupMenuPagenatorView.h; sourceTree = "<group>"; };
+		B39B06FD19381DCF0007C77F /* QBPopupMenuPagenatorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QBPopupMenuPagenatorView.m; sourceTree = "<group>"; };
+		B3DAE4E7193D62C100AE1784 /* ICTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ICTextView.h; sourceTree = "<group>"; };
+		B3DAE4E8193D62C100AE1784 /* ICTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ICTextView.m; sourceTree = "<group>"; };
+		B3E9BC87193D7F3E002923F6 /* HelloWorld-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "HelloWorld-Bridging-Header.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,6 +99,22 @@
 			children = (
 				01924570160F3098005A22BB /* iConsole.h */,
 				01924571160F3098005A22BB /* iConsole.m */,
+				B38A49101936D14E00FD52B6 /* iConsoleManager.h */,
+				B38A49111936D14E00FD52B6 /* iConsoleManager.m */,
+				B39B06F219381DCF0007C77F /* QBPlasticPopupMenu.h */,
+				B39B06F319381DCF0007C77F /* QBPlasticPopupMenu.m */,
+				B39B06F419381DCF0007C77F /* QBPopupMenu.h */,
+				B39B06F519381DCF0007C77F /* QBPopupMenu.m */,
+				B39B06F619381DCF0007C77F /* QBPopupMenuItem.h */,
+				B39B06F719381DCF0007C77F /* QBPopupMenuItem.m */,
+				B39B06F819381DCF0007C77F /* QBPopupMenuItemView.h */,
+				B39B06F919381DCF0007C77F /* QBPopupMenuItemView.m */,
+				B39B06FA19381DCF0007C77F /* QBPopupMenuOverlayView.h */,
+				B39B06FB19381DCF0007C77F /* QBPopupMenuOverlayView.m */,
+				B39B06FC19381DCF0007C77F /* QBPopupMenuPagenatorView.h */,
+				B39B06FD19381DCF0007C77F /* QBPopupMenuPagenatorView.m */,
+				B3DAE4E7193D62C100AE1784 /* ICTextView.h */,
+				B3DAE4E8193D62C100AE1784 /* ICTextView.m */,
 			);
 			name = iConsole;
 			path = ../../iConsole;
@@ -109,6 +150,7 @@
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
+				B3E9BC87193D7F3E002923F6 /* HelloWorld-Bridging-Header.h */,
 			);
 			name = CustomTemplate;
 			sourceTree = "<group>";
@@ -212,7 +254,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
+				B39B070319381DCF0007C77F /* QBPopupMenuPagenatorView.m in Sources */,
+				B38A49121936D14E00FD52B6 /* iConsoleManager.m in Sources */,
 				1D3623260D0F684500981E51 /* HelloWorldAppDelegate.m in Sources */,
+				B39B070219381DCF0007C77F /* QBPopupMenuOverlayView.m in Sources */,
+				B39B070019381DCF0007C77F /* QBPopupMenuItem.m in Sources */,
+				B39B06FE19381DCF0007C77F /* QBPlasticPopupMenu.m in Sources */,
+				B3DAE4E9193D62C100AE1784 /* ICTextView.m in Sources */,
+				B39B06FF19381DCF0007C77F /* QBPopupMenu.m in Sources */,
+				B39B070119381DCF0007C77F /* QBPopupMenuItemView.m in Sources */,
 				28D7ACF80DDB3853001CB0EB /* HelloWorldViewController.m in Sources */,
 				01924572160F3098005A22BB /* iConsole.m in Sources */,
 				0188830416D82B5A00AEEF0E /* GTMStackTrace.m in Sources */,
@@ -227,6 +277,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -235,8 +286,11 @@
 				GCC_PREFIX_HEADER = HelloWorld_Prefix.pch;
 				INFOPLIST_FILE = "HelloWorld-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = iConsole;
 				SDKROOT = iphoneos;
+				SWIFT_OBJC_BRIDGING_HEADER = "HelloWorld-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -246,14 +300,17 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = HelloWorld_Prefix.pch;
 				INFOPLIST_FILE = "HelloWorld-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = iConsole;
 				SDKROOT = iphoneos;
+				SWIFT_OBJC_BRIDGING_HEADER = "HelloWorld-Bridging-Header.h";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
