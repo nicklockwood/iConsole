@@ -3,9 +3,11 @@ Purpose
 
 iConsole is a simple, pluggable class to enable more useful in-app logging for your iPhone apps. It enables you to check error and crash logs within a built application without needing to connect to the Xcode debugger. It also allows non-technical beta testers of your applications to submit log information to you easily.
 
+
+
 iConsole also serves another purpose: Using the command interface it provides an easy way to add debugging commands and let you toggle application features on and off at runtime in a way that can be easily disabled in the final release of your app, and doesn't require you to build additional throwaway user interface components.
 
-
+  
 Supported OS & SDK Versions
 -----------------------------
 
