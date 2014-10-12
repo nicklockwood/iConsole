@@ -35,11 +35,11 @@
     
     [iConsole sharedConsole].delegate = self;
 	
-	int touches = (TARGET_IPHONE_SIMULATOR ? [iConsole sharedConsole].simulatorTouchesToShow: [iConsole sharedConsole].deviceTouchesToShow);
+	NSUInteger touches = (TARGET_IPHONE_SIMULATOR ? [iConsole sharedConsole].simulatorTouchesToShow: [iConsole sharedConsole].deviceTouchesToShow);
 	if (touches > 0 && touches < 11)
 	{
 		self.swipeLabel.text = [NSString stringWithFormat:
-								@"\nSwipe up with %i finger%@ to show the console",
+								@"\nSwipe up with %zd finger%@ to show the console",
 								touches, (touches != 1)? @"s": @""];
 	}
 	else if (TARGET_IPHONE_SIMULATOR ? [iConsole sharedConsole].simulatorShakeToShow: [iConsole sharedConsole].deviceShakeToShow)

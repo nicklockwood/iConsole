@@ -1,7 +1,7 @@
 //
 //  iConsole.h
 //
-//  Version 1.5.2
+//  Version 1.5.3
 //
 //  Created by Nick Lockwood on 20/12/2010.
 //  Copyright 2010 Charcoal Design
@@ -97,11 +97,17 @@ iConsoleLogLevel;
 
 + (iConsole *)sharedConsole;
 
-+ (void)log:(NSString *)format, ...;
-+ (void)info:(NSString *)format, ...;
-+ (void)warn:(NSString *)format, ...;
-+ (void)error:(NSString *)format, ...;
-+ (void)crash:(NSString *)format, ...;
++ (void)log:(NSString *)format, ... NS_FORMAT_FUNCTION(1,2);
++ (void)info:(NSString *)format, ... NS_FORMAT_FUNCTION(1,2);
++ (void)warn:(NSString *)format, ... NS_FORMAT_FUNCTION(1,2);
++ (void)error:(NSString *)format, ... NS_FORMAT_FUNCTION(1,2);
++ (void)crash:(NSString *)format, ... NS_FORMAT_FUNCTION(1,2);
+
++ (void)log:(NSString *)format args:(va_list)argList;
++ (void)info:(NSString *)format args:(va_list)argList;
++ (void)warn:(NSString *)format args:(va_list)argList;
++ (void)error:(NSString *)format args:(va_list)argList;
++ (void)crash:(NSString *)format args:(va_list)argList;
 
 + (void)clear;
 

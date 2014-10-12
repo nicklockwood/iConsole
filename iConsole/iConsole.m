@@ -1,7 +1,7 @@
 //
 //  iConsole.m
 //
-//  Version 1.5.2
+//  Version 1.5.3
 //
 //  Created by Nick Lockwood on 20/12/2010.
 //  Copyright 2010 Charcoal Design
@@ -33,6 +33,7 @@
 #import "iConsole.h"
 #import <stdarg.h>
 #import <string.h> 
+#import <TargetConditionals.h>
 
 
 #import <Availability.h>
@@ -60,8 +61,6 @@
 
 - (void)saveSettings;
 
-void exceptionHandler(NSException *exception);
-
 @end
 
 
@@ -70,7 +69,7 @@ void exceptionHandler(NSException *exception);
 #pragma mark -
 #pragma mark Private methods
 
-void exceptionHandler(NSException *exception)
+static void exceptionHandler(NSException *exception)
 {
 	
 #if ICONSOLE_USE_GOOGLE_STACK_TRACE
@@ -109,10 +108,10 @@ void exceptionHandler(NSException *exception)
 - (void)setConsoleText
 {
 	NSString *text = _infoString;
-	int touches = (TARGET_IPHONE_SIMULATOR ? _simulatorTouchesToShow: _deviceTouchesToShow);
+	NSUInteger touches = (TARGET_IPHONE_SIMULATOR ? _simulatorTouchesToShow: _deviceTouchesToShow);
 	if (touches > 0 && touches < 11)
 	{
-		text = [text stringByAppendingFormat:@"\nSwipe down with %i finger%@ to hide console", touches, (touches != 1)? @"s": @""];
+		text = [text stringByAppendingFormat:@"\nSwipe down with %zd finger%@ to hide console", touches, (touches != 1)? @"s": @""];
 	}
 	else if (TARGET_IPHONE_SIMULATOR ? _simulatorShakeToShow: _deviceShakeToShow)
 	{
@@ -160,14 +159,16 @@ void exceptionHandler(NSException *exception)
 {
 	[self findAndResignFirstResponder:[self mainWindow]];
 	
-	UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:@""
+    //note: we can't use UIAlertController because we don't have a UIViewController
+    
+    UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:nil
                                                        delegate:self
                                               cancelButtonTitle:@"Cancel"
                                          destructiveButtonTitle:@"Clear Log"
-                                              otherButtonTitles:@"Send by Email", nil];
+                                              otherButtonTitles:@"Send by Email", @"Close Console", nil];
 
-	sheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
-	[sheet showInView:self.view];
+    sheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
+    [sheet showInView:self.view];
 }
 
 - (CGAffineTransform)viewTransform
@@ -176,6 +177,7 @@ void exceptionHandler(NSException *exception)
 	switch ([UIApplication sharedApplication].statusBarOrientation)
     {
         case UIInterfaceOrientationPortrait:
+        case UIInterfaceOrientationUnknown:
             angle = 0;
             break;
 		case UIInterfaceOrientationPortraitUpsideDown:
@@ -202,6 +204,7 @@ void exceptionHandler(NSException *exception)
 	switch ([UIApplication sharedApplication].statusBarOrientation)
     {
 		case UIInterfaceOrientationPortrait:
+        case UIInterfaceOrientationUnknown:
 			frame.origin.y = frame.size.height;
 			break;
 		case UIInterfaceOrientationPortraitUpsideDown:
@@ -288,6 +291,7 @@ void exceptionHandler(NSException *exception)
 	switch ([UIApplication sharedApplication].statusBarOrientation)
     {
 		case UIInterfaceOrientationPortrait:
+        case UIInterfaceOrientationUnknown:
 			bounds.origin.y += frame.size.height;
 			bounds.size.height -= frame.size.height;
 			break;
@@ -324,6 +328,7 @@ void exceptionHandler(NSException *exception)
 	switch ([UIApplication sharedApplication].statusBarOrientation)
     {
 		case UIInterfaceOrientationPortrait:
+        case UIInterfaceOrientationUnknown:
 			bounds.size.height -= frame.size.height;
 			break;
 		case UIInterfaceOrientationPortraitUpsideDown:
@@ -379,7 +384,7 @@ void exceptionHandler(NSException *exception)
 {
 	if (![textField.text isEqualToString:@""])
 	{
-		[iConsole log:textField.text];
+		[iConsole log:@"%@", textField.text];
 		[_delegate handleConsoleCommand:textField.text];
 		textField.text = @"";
 	}
@@ -413,12 +418,19 @@ void exceptionHandler(NSException *exception)
 	}
 	else if (buttonIndex != actionSheet.cancelButtonIndex)
 	{
-        NSString *URLSafeName = [self URLEncodedString:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"]];
-        NSString *URLSafeLog = [self URLEncodedString:[_log componentsJoinedByString:@"\n"]];
-        NSMutableString *URLString = [NSMutableString stringWithFormat:@"mailto:%@?subject=%@%%20Console%%20Log&body=%@",
-                                      _logSubmissionEmail ?: @"", URLSafeName, URLSafeLog];
+        if (buttonIndex == 1)
+        {
+            NSString *URLSafeName = [self URLEncodedString:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"]];
+            NSString *URLSafeLog = [self URLEncodedString:[_log componentsJoinedByString:@"\n"]];
+            NSMutableString *URLString = [NSMutableString stringWithFormat:@"mailto:%@?subject=%@%%20Console%%20Log&body=%@",
+                                          _logSubmissionEmail ?: @"", URLSafeName, URLSafeLog];
 
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:URLString]];
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:URLString]];
+        }
+        else
+        {
+            [self hideConsole];
+        }
 	}
 }
 
@@ -459,7 +471,7 @@ void exceptionHandler(NSException *exception)
         _simulatorTouchesToShow = 2;
         _deviceTouchesToShow = 3;
         _simulatorShakeToShow = YES;
-        _deviceShakeToShow = NO;
+        _deviceShakeToShow = YES;
         
         self.infoString = @"iConsole: Copyright © 2010 Charcoal Design";
         self.inputPlaceholderString = @"Enter command...";
@@ -500,6 +512,8 @@ void exceptionHandler(NSException *exception)
 
 - (void)viewDidLoad
 {
+    [super viewDidLoad];
+    
     self.view.clipsToBounds = YES;
 	self.view.backgroundColor = _backgroundColor;
 	self.view.autoresizesSubviews = YES;
@@ -577,77 +591,98 @@ void exceptionHandler(NSException *exception)
 #pragma mark -
 #pragma mark Public methods
 
-+ (void)log:(NSString *)format arguments:(va_list)argList
-{	
-	NSLogv(format, argList);
-	
-    if ([self sharedConsole].enabled)
-    {
-        NSString *message = [[NSString alloc] initWithFormat:format arguments:argList];
-        if ([NSThread currentThread] == [NSThread mainThread])
-        {	
-            [[self sharedConsole] logOnMainThread:message];
-        }
-        else
-        {
-            [[self sharedConsole] performSelectorOnMainThread:@selector(logOnMainThread:)
-                                                   withObject:message waitUntilDone:NO];
-        }
-    }
-}
-
 + (void)log:(NSString *)format, ...
 {
-    if ([self sharedConsole].logLevel >= iConsoleLogLevelNone)
-    {
-        va_list argList;
-        va_start(argList,format);
-        [self log:format arguments:argList];
-        va_end(argList);
-    }
+    va_list argList;
+    va_start(argList, format);
+    [self log:format args:argList];
+    va_end(argList);
 }
 
 + (void)info:(NSString *)format, ...
 {
-    if ([self sharedConsole].logLevel >= iConsoleLogLevelInfo)
-    {
-        va_list argList;
-        va_start(argList, format);
-        [self log:[@"INFO: " stringByAppendingString:format] arguments:argList];
-        va_end(argList);
-    }
+    va_list argList;
+    va_start(argList, format);
+    [self info:format args:argList];
+    va_end(argList);
 }
 
 + (void)warn:(NSString *)format, ...
 {
-	if ([self sharedConsole].logLevel >= iConsoleLogLevelWarning)
-    {
-        va_list argList;
-        va_start(argList, format);
-        [self log:[@"WARNING: " stringByAppendingString:format] arguments:argList];
-        va_end(argList);
-    }
+    va_list argList;
+    va_start(argList, format);
+    [self warn:format args:argList];
+    va_end(argList);
 }
 
 + (void)error:(NSString *)format, ...
 {
-    if ([self sharedConsole].logLevel >= iConsoleLogLevelError)
-    {
-        va_list argList;
-        va_start(argList, format);
-        [self log:[@"ERROR: " stringByAppendingString:format] arguments:argList];
-        va_end(argList);
-    }
+    va_list argList;
+    va_start(argList, format);
+    [self error:format args:argList];
+    va_end(argList);
 }
 
 + (void)crash:(NSString *)format, ...
 {
+    va_list argList;
+    va_start(argList, format);
+    [self crash:format args:argList];
+    va_end(argList);
+}
+
++ (void)log:(NSString *)format args:(va_list)argList
+{
+    if ([self sharedConsole].logLevel > iConsoleLogLevelNone)
+    {
+        NSString *message = [(NSString *)[NSString alloc] initWithFormat:format arguments:argList];
+        
+        NSLog(@"%@", message);
+        
+        if ([self sharedConsole].enabled)
+        {
+            if ([NSThread currentThread] == [NSThread mainThread])
+            {
+                [[self sharedConsole] logOnMainThread:message];
+            }
+            else
+            {
+                [[self sharedConsole] performSelectorOnMainThread:@selector(logOnMainThread:)
+                                                       withObject:message waitUntilDone:NO];
+            }
+        }
+    }
+}
+
++ (void)info:(NSString *)format args:(va_list)argList
+{
+    if ([self sharedConsole].logLevel >= iConsoleLogLevelInfo)
+    {
+        [self log:[@"INFO: " stringByAppendingString:format] args:argList];
+    }
+}
+
++ (void)warn:(NSString *)format args:(va_list)argList
+{
+    if ([self sharedConsole].logLevel >= iConsoleLogLevelWarning)
+    {
+        [self log:[@"WARNING: " stringByAppendingString:format] args:argList];
+    }
+}
+
++ (void)error:(NSString *)format args:(va_list)argList
+{
+    if ([self sharedConsole].logLevel >= iConsoleLogLevelError)
+    {
+        [self log:[@"ERROR: " stringByAppendingString:format] args:argList];
+    }
+}
+
++ (void)crash:(NSString *)format args:(va_list)argList
+{
     if ([self sharedConsole].logLevel >= iConsoleLogLevelCrash)
     {
-        va_list argList;
-        va_start(argList, format);
-        [self log:[@"CRASH: " stringByAppendingString:format] arguments:argList];
-        va_end(argList);
+        [self log:[@"CRASH: " stringByAppendingString:format] args:argList];
     }
 }
 
@@ -706,6 +741,7 @@ void exceptionHandler(NSException *exception)
 			switch ([UIApplication sharedApplication].statusBarOrientation)
             {
 				case UIInterfaceOrientationPortrait:
+                case UIInterfaceOrientationUnknown:
                 {
 					if (allUp)
 					{
