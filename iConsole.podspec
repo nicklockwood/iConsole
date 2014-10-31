@@ -1,5 +1,5 @@
 Pod::Spec.new do |s|
-  s.name     = 'iConsole+Search'
+  s.name     = 'iConsole'
   s.version  = '1.0.0'
   s.license  = 'zlib'
   s.summary  = '本库是对iConsole（https://github.com/nicklockwood/iConsole）的扩展，主要增加了搜索关键字的功能，利于调试'
