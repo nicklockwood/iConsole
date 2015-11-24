@@ -71,6 +71,8 @@
 
 static void exceptionHandler(NSException *exception)
 {
+	if([@"signalRaisedException" isEqualToString:exception.name])
+		return;
 	
 #if ICONSOLE_USE_GOOGLE_STACK_TRACE
 	
